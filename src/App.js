@@ -1,112 +1,124 @@
-// import React, {} from "react";
-// import firebase from "firebase/compat/app";
-// import 'firebase/compat/auth';
-// import 'firebase/compat/firestore';
-// import { useAuthState } from "react-firebase-hooks/auth";
-// import { useCollection } from 'react-firebase-hooks/firestore';
-
-// firebase.initializeApp({
-//   apiKey: "AIzaSyDzcUzLZfXFx0QJL5gtt_4XbudXrKeMhc8",
-//   authDomain: "personalisedresponses.firebaseapp.com",
-//   projectId: "personalisedresponses",
-//   storageBucket: "personalisedresponses.appspot.com",
-//   messagingSenderId: "73847712894",
-//   appId: "1:73847712894:web:f05348c5d471d58af1bc2f",
-//   measurementId: "G-QFVLBDD92N"
-// });
-
-
-// const auth = firebase.auth();
-// const firestore = firebase.firestore();
-
-// function SignInWithGoogle() {
-//   const signInWithGoogle = () => {
-//     const provider = new firebase.auth.GoogleAuthProvider();
-//     auth.signInWithPopup(provider);
-//   };
-//   return (
-//     <div>
-//       <button onClick={signInWithGoogle}>Sign in with google</button>
-//     </div>
-//   );
-// }
-
-// function SignOut() {
-//   return (
-//     <button
-//       onClick={() => {
-//         auth.signOut();
-//       }}
-//     >
-//       Sign out
-//     </button>
-//   );
-// }
-
-// function Responses(){
-
-//   const db = firestore.collection('responses')
-//   const query = db.get()
-
-//   const [responses] = useCollection(query, {idField: 'id'})
-//   console.log(query)
-
-//   return(
-//     <div>
-//       {responses && responses.map(res => <PersonalisedResponce key={res.id} responses={res}/>)}
-//     </div>
-//   )
-// }
-
-// function PersonalisedResponce(props){
-//   const {body, title} = props.responses
-
-//   return(
-//     <div>
-//       {body}
-//     </div>
-//   )
-// }
-
-
-// export default function App() {
-
-//   const [user] = useAuthState(auth);
-
-//   return (
-//     <div className="App">
-//       <header>
-
-//       </header>
-
-//       <section>
-//         {user ? <SignOut/> : <SignInWithGoogle/>}
-//         <Responses/>
-
-//       </section>
-//     </div>
-//   );
-// }
-
 import React, {useEffect, useState} from "react";
 import {app} from './components/firebase'
 import { collection, getDocs, addDoc} from 'firebase/firestore';
 import { getFirestore } from "@firebase/firestore";
 import GoogleAuth from "./components/GoogleAuth"
+import ResponceOverView from "./components/ResponceOverView"
+
+import AppBar from '@mui/material/AppBar';
+import Container from '@mui/material/Container';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import SearchIcon from '@mui/icons-material/Search';
+import { styled, alpha } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+import Box from '@mui/material/Box';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 const db = getFirestore(app)
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 export default function App() {
 
     const [newResponsesbody, setnewResponsesbody] = useState("")
     const [newResponsesClass, setnewResponsesClass] = useState("")
     const [newResponsesTitle, setnewResponsesTitle] = useState("")
+    const [userEmail, setUserEmail] = useState("")
+    const [userName, setUserName] = useState("")
 
     const [responses, setResponses] = useState([])
     const responsesCollectionRef = collection(db, "responses")
 
+    const [allTabLable, setAllTabLable] = useState("All")
+    const [staffTabLable, setStaffTabLable] = useState("Staff")
+    const [studentTabLable, setStudentTabLable] = useState("Student")
+    const [toCloseTabLable, setToCloseTabLable] = useState("To Close")
+    const [postItsTabLable, setPostItsTabLable] = useState("Post-its")
+    const [referToCatalogueTabLable, setReferToCatalogueTabLable] = useState("Refer To Catalogue")
+    const [insearchTabLable, setInsearchTabLable] = useState("Insearch")
+
+    const [staffTitles, setStaffTitles] = useState([])
+    const [studentTitles, setStudentTitles] = useState([])
+    const [toCloseTitles, setToCloseTitles] = useState([])
+    const [postItsTitles, setPostItsTitles] = useState([])
+    const [referToCatalogueTitles, setReferToCatalogueTitles] = useState([])
+    const [insearchTitles, setInsearchTitles] = useState([])
+    const [allTitles, setAllTitles] = useState([])
+ 
     const createResponses = async () => {
-      console.log(newResponsesbody)
       await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle})
       updateFromDB()
     }
@@ -114,50 +126,343 @@ export default function App() {
     function updateFromDB(){
         const getResponses = async () => {
           const data = await getDocs(responsesCollectionRef)
-          console.log(data.docs)
           setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
       }
       getResponses();
     }
 
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+      setTabValue(newValue);
+    };
+
+    function handleSearch(e) {
+      getAllCounts(e)
+    }
+    
+    function getAllCounts(search) {
+    
+      const staffTitlesTemp = []
+      const studentTitlesTemp = []
+      const toCloseTitlesTemp = []
+      const postItsTitlesTemp = []
+      const referToCatalogueTitlesTemp = []
+      const insearchTitlesTemp = []
+
+      const staffTitlesIndexTemp = []
+      const studentTitlesIndexTemp = []
+      const toCloseTitlesIndexTemp = []
+      const postItsTitlesIndexTemp = []
+      const referToCatalogueTitlesIndexTemp = []
+      const insearchTitlesIndexTemp = []
+    
+    
+      responses.map((responses , i) => {
+        if (responses.class === "Staff") {
+          staffTitlesTemp.push(responses.title)
+          staffTitlesIndexTemp.push(i)
+        } else if (responses.class === "Student") {
+          studentTitlesTemp.push(responses.title)
+          studentTitlesIndexTemp.push(i)
+        } else if (responses.class === "To Close") {
+          toCloseTitlesTemp.push(responses.title)
+          toCloseTitlesIndexTemp.push(i)
+        } else if (responses.class === "Post-its") {
+          postItsTitlesTemp.push(responses.title)
+          postItsTitlesIndexTemp.push(i)
+        } else if (responses.class === "Refer To Catalogue") {
+          referToCatalogueTitlesTemp.push(responses.title)
+          referToCatalogueTitlesIndexTemp.push(i)
+        } else if (responses.class === "Insearch") {
+          insearchTitlesTemp.push(responses.title)
+          insearchTitlesIndexTemp.push(i)
+        }
+        return (<></>)
+      })
+
+      let staffTitlesTemp2 = staffTitlesIndexTemp
+      let studentTitlesTemp2 = studentTitlesIndexTemp
+      let toCloseTitlesTemp2 = toCloseTitlesIndexTemp
+      let postItsTitlesTemp2 = postItsTitlesIndexTemp
+      let referToCatalogueTitlesTemp2 = referToCatalogueTitlesIndexTemp
+      let insearchTitlesTemp2 = insearchTitlesIndexTemp  
+      
+      if (search !== "") {
+        staffTitlesTemp2 = []
+        for (let i in staffTitlesTemp){
+          if (staffTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            staffTitlesTemp2.push(staffTitlesIndexTemp[i])
+          }
+        }
+
+        studentTitlesTemp2 = []
+        for (let i in studentTitlesTemp){
+          if (studentTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            studentTitlesTemp2.push(studentTitlesIndexTemp[i])
+          }
+        }
+
+        toCloseTitlesTemp2 = []
+        for (let i in toCloseTitlesTemp){
+          if (toCloseTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            toCloseTitlesTemp2.push(toCloseTitlesIndexTemp[i])
+          }
+        }
+
+        postItsTitlesTemp2 = []
+        for (let i in postItsTitlesTemp){
+          if (postItsTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            postItsTitlesTemp2.push(postItsTitlesIndexTemp[i])
+          }
+        }
+
+        referToCatalogueTitlesTemp2 = []
+        for (let i in referToCatalogueTitlesTemp){
+          if (referToCatalogueTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            referToCatalogueTitlesTemp2.push(referToCatalogueTitlesIndexTemp[i])
+          }
+        }
+
+        insearchTitlesTemp2 = []
+        for (let i in insearchTitlesTemp){
+          if (insearchTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            insearchTitlesTemp2.push(insearchTitlesIndexTemp[i])
+          }
+        }
+      }
+
+      setStaffTitles(staffTitlesTemp2)
+      setStudentTitles(studentTitlesTemp2)
+      setToCloseTitles(toCloseTitlesTemp2)
+      setPostItsTitles(postItsTitlesTemp2)
+      setReferToCatalogueTitles(referToCatalogueTitlesTemp2)
+      setInsearchTitles(insearchTitlesTemp2)
+      setAllTitles(staffTitlesTemp2.concat(studentTitlesTemp2).concat(toCloseTitlesTemp2).concat(postItsTitlesTemp2).concat(referToCatalogueTitlesTemp2).concat(insearchTitlesTemp2))
+
+      setAllTabLable("All (" + (staffTitlesTemp2.length + studentTitlesTemp2.length + toCloseTitlesTemp2.length + postItsTitlesTemp2.length + referToCatalogueTitlesTemp2.length + insearchTitlesTemp2.length) + ")")
+      setStaffTabLable("Staff (" +  staffTitlesTemp2.length + ")")
+      setStudentTabLable("Student (" +  studentTitlesTemp2.length + ")")
+      setToCloseTabLable("To Close (" +  toCloseTitlesTemp2.length + ")")
+      setPostItsTabLable("Post-its (" +  postItsTitlesTemp2.length + ")")
+      setReferToCatalogueTabLable("Refer To Catalogue (" +  referToCatalogueTitlesTemp2.length + ")")
+      setInsearchTabLable("Insearch0 (" +  insearchTitlesTemp2.length + ")")
+    }
+
     useEffect(() => {
       updateFromDB()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+      getAllCounts("")
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [responses])
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setUserEmail(localStorage.getItem('email'))
+        setUserName(localStorage.getItem('name'))
+      }, 1000);
+      return () => clearInterval(interval);
+    }, []);
 
     return (
       <div>
-        <GoogleAuth/>
-          {responses.map((responses) => {
+        <AppBar position="static">
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="span"
+                  sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+                >
+                ITSC Personalised Responses
+                </Typography>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  onChange={(e) => handleSearch(e.target.value)}
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+              <Box sx={{ flexGrow: 1 }}/>
+              <GoogleAuth/>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        
+        <Box sx={{ width: '100%' }}>
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={tabValue} onChange={handleTabChange} aria-label="Class">
+              <Tab label={allTabLable} {...a11yProps(0)} />
+              <Tab label={staffTabLable} {...a11yProps(1)} />
+              <Tab label={studentTabLable} {...a11yProps(2)} />
+              <Tab label={toCloseTabLable} {...a11yProps(3)} />
+              <Tab label={postItsTabLable} {...a11yProps(4)} />
+              <Tab label={referToCatalogueTabLable} {...a11yProps(5)} />
+              <Tab label={insearchTabLable} {...a11yProps(6)} />
+              {(() => {
+                if (userEmail.endsWith('@uts.edu.au')){
+                  return (<Tab label="Create New" {...a11yProps(7)} />)
+                }
+              })()}
+            </Tabs>
+          </Box>
+        
+          <TabPanel value={tabValue} index={0}>
+            <ResponceOverView titles={allTitles} responses={responses} />
+              {/* {staffTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })}
+              {studentTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })}
+              {toCloseTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })}
+              {postItsTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })}
+              {referToCatalogueTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })}
+              {insearchTitles.map((i) => {
+                return (
+                  <div key={i}>
+                    <h1> {responses[i].title} </h1>
+                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                  </div>
+                );
+              })} */}
+          </TabPanel>
+          <TabPanel value={tabValue} index={1}>
+            {staffTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={2}>
+            {studentTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={3}>
+            {toCloseTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={4}>
+            {postItsTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={5}>
+            {referToCatalogueTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={6}>
+            {insearchTitles.map((i) => {
+              return (
+                <div key={i}>
+                  <h1> {responses[i].title} </h1>
+                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
+                </div>
+              );
+            })}
+          </TabPanel>
+          <TabPanel value={tabValue} index={7}>
+            <select placeholder="Title" name="classSelect" id="classSelect" onChange={(event) => {setnewResponsesClass(event.target.value)}}>
+              <option value="" disabled selected>Select Class</option>
+              <option value="Staff">Staff</option>
+              <option value="Student">Student</option>
+              <option value="To Close">To Close</option>
+              <option value="Post-its">Post-its</option>
+              <option value="Refer To Catalogue">Refer To Catalogue</option>
+              <option value="Insearch">Insearch</option>
+            </select>
+
+            <input placeholder="Title" onChange={(event) => {setnewResponsesTitle(event.target.value)}}/>
+          
+            <textarea
+              style={{ whiteSpace: 'pre-wrap' }}
+              id="body"
+              name="story"
+              rows="5"
+              cols="33"
+              onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+            >
+            </textarea>
+
+            <button onClick={createResponses}>Create New Personalised Responses</button>
+          </TabPanel>
+        </Box>
+      
+
+
+          {/* {responses.map((responses) => {
             return (
               <div>
-                <h1> Tiles: {responses.title} </h1>
+                <h1> {responses.title} </h1>
                 <div dangerouslySetInnerHTML={{ __html: responses.body }} />
               </div>
             );
-        })}
-        <select placeholder="Title" name="classSelect" id="classSelect" onChange={(event) => {setnewResponsesClass(event.target.value)}}>
-          <option value="" disabled selected>Select Class</option>
-          <option value="Staff">Staff</option>
-          <option value="Student">Student</option>
-          <option value="ToClose">To Close</option>
-          <option value="Post-its">Post-its</option>
-          <option value="ReferToCatalogue">Refer To Catalogue</option>
-          <option value="Insearch">Insearch</option>
-        </select>
+        })} */}
 
-        <input placeholder="Title" onChange={(event) => {setnewResponsesTitle(event.target.value)}}/>
-      
-        <textarea
-          style={{ whiteSpace: 'pre-wrap' }}
-          id="body"
-          name="story"
-          rows="5"
-          cols="33"
-          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-        >
-        </textarea>
-
-        <button onClick={createResponses}>Create New Personalised Responses</button>
       </div>
     )
     
