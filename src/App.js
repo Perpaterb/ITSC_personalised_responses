@@ -16,6 +16,13 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import FormControl from "@mui/material/FormControl";
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+import Button from '@mui/material/Button';
 
 const db = getFirestore(app)
 
@@ -96,6 +103,10 @@ export default function App() {
     const [newResponsesbody, setnewResponsesbody] = useState("")
     const [newResponsesClass, setnewResponsesClass] = useState("")
     const [newResponsesTitle, setnewResponsesTitle] = useState("")
+
+    const [canBeCreated, setCanBeCreated] = useState(false)
+    const [error, setError] = useState("")
+
     const [userEmail, setUserEmail] = useState("")
     const [userName, setUserName] = useState("")
 
@@ -119,8 +130,11 @@ export default function App() {
     const [allTitles, setAllTitles] = useState([])
  
     const createResponses = async () => {
-      await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle})
-      updateFromDB()
+      if (canBeCreated === false){
+        await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle})
+        updateFromDB()
+        setTabValue(0)
+      }
     }
 
     function updateFromDB(){
@@ -250,6 +264,16 @@ export default function App() {
     }
 
     useEffect(() => {
+      if (newResponsesbody !== "" && newResponsesClass !== "" && newResponsesTitle !== ""){
+        setCanBeCreated(false)
+        setError("")
+      } else {
+        setCanBeCreated(true)
+        setError("")
+      }
+    }, [newResponsesbody, newResponsesClass, newResponsesTitle])
+
+    useEffect(() => {
       updateFromDB()
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -280,16 +304,16 @@ export default function App() {
                 >
                 ITSC Personalised Responses
                 </Typography>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search…"
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
+                  <Search>
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                      onChange={(e) => handleSearch(e.target.value)}
+                      placeholder="Search…"
+                      inputProps={{ 'aria-label': 'search' }}
+                    />
+                  </Search>
               <Box sx={{ flexGrow: 1 }}/>
               <GoogleAuth/>
             </Toolbar>
@@ -307,161 +331,84 @@ export default function App() {
               <Tab label={referToCatalogueTabLable} {...a11yProps(5)} />
               <Tab label={insearchTabLable} {...a11yProps(6)} />
               {(() => {
-                if (userEmail.endsWith('@uts.edu.au')){
-                  return (<Tab label="Create New" {...a11yProps(7)} />)
-                }
+                if (userEmail !== null){
+                  if (userEmail.endsWith('@uts.edu.au')){
+                    return (<Tab label="Create New" {...a11yProps(7)} />)
+                  }
+                } 
               })()}
             </Tabs>
           </Box>
         
           <TabPanel value={tabValue} index={0}>
-            <ResponceOverView titles={allTitles} responses={responses} />
-              {/* {staffTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })}
-              {studentTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })}
-              {toCloseTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })}
-              {postItsTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })}
-              {referToCatalogueTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })}
-              {insearchTitles.map((i) => {
-                return (
-                  <div key={i}>
-                    <h1> {responses[i].title} </h1>
-                    <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                  </div>
-                );
-              })} */}
+            <ResponceOverView titles={allTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            {staffTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            {studentTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            {toCloseTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            {postItsTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            {referToCatalogueTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={6}>
-            {insearchTitles.map((i) => {
-              return (
-                <div key={i}>
-                  <h1> {responses[i].title} </h1>
-                  <div dangerouslySetInnerHTML={{ __html: responses[i].body }} />
-                </div>
-              );
-            })}
+            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} />
           </TabPanel>
           <TabPanel value={tabValue} index={7}>
-            <select placeholder="Title" name="classSelect" id="classSelect" onChange={(event) => {setnewResponsesClass(event.target.value)}}>
-              <option value="" disabled selected>Select Class</option>
-              <option value="Staff">Staff</option>
-              <option value="Student">Student</option>
-              <option value="To Close">To Close</option>
-              <option value="Post-its">Post-its</option>
-              <option value="Refer To Catalogue">Refer To Catalogue</option>
-              <option value="Insearch">Insearch</option>
-            </select>
-
-            <input placeholder="Title" onChange={(event) => {setnewResponsesTitle(event.target.value)}}/>
-          
-            <textarea
-              style={{ whiteSpace: 'pre-wrap' }}
-              id="body"
-              name="story"
-              rows="5"
-              cols="33"
-              onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+            <Box
+                sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                p: 1,
+                m: 1,
+                bgcolor: 'background.paper',
+                }}
             >
-            </textarea>
+                <Box sx={{ width: '20%'}}>
+                    <FormControl sx={{ width: '80%' }}>
+                      <InputLabel id="selest-lable">Class</InputLabel>
+                      <Select
+                          labelId="Title-select-label"
+                          id="select"
+                          value={newResponsesClass}
+                          label="Class"
+                          onChange={(event) => {setnewResponsesClass(event.target.value)}}
+                      >
+                        <MenuItem value="Staff">Staff</MenuItem>
+                        <MenuItem value="Student">Student</MenuItem>
+                        <MenuItem value="To Close">To Close</MenuItem>
+                        <MenuItem value="Post-its">Post-its</MenuItem>
+                        <MenuItem value="Refer To Catalogue">Refer To Catalogue</MenuItem>
+                        <MenuItem value="Insearch">Insearch</MenuItem>
+                      </Select>
+                      <OutlinedInput placeholder="Title" onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
+                      <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
+                      <p>{error}</p>
+                    </FormControl>
+                </Box>
 
-            <button onClick={createResponses}>Create New Personalised Responses</button>
+                <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                  <p>Hi ______,<b/></p>
+                  <TextareaAutosize
+                    aria-label="textarea"
+                    placeholder="Empty"
+                    style={{ width: "100%" }}
+                    onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                  />
+                  <p>Kind regards,</p>
+                  <p>{userName}</p>
+                  <p>IT Support Centre</p>
+                </Box>
+            </Box>
           </TabPanel>
         </Box>
-      
-
-
-          {/* {responses.map((responses) => {
-            return (
-              <div>
-                <h1> {responses.title} </h1>
-                <div dangerouslySetInnerHTML={{ __html: responses.body }} />
-              </div>
-            );
-        })} */}
 
       </div>
     )
