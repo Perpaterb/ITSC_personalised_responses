@@ -5,6 +5,7 @@ import { getFirestore } from "@firebase/firestore";
 import GoogleAuth from "./components/GoogleAuth"
 import ResponceOverView from "./components/ResponceOverView"
 
+
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
@@ -23,6 +24,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
+
 
 const db = getFirestore(app)
 
@@ -128,7 +130,8 @@ export default function App() {
     const [referToCatalogueTitles, setReferToCatalogueTitles] = useState([])
     const [insearchTitles, setInsearchTitles] = useState([])
     const [allTitles, setAllTitles] = useState([])
- 
+
+
     const createResponses = async () => {
       if (canBeCreated === false){
         await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle})
@@ -266,12 +269,27 @@ export default function App() {
     useEffect(() => {
       if (newResponsesbody !== "" && newResponsesClass !== "" && newResponsesTitle !== ""){
         setCanBeCreated(false)
-        setError("")
+        // setError("")
       } else {
         setCanBeCreated(true)
-        setError("")
+        // setError("")
       }
     }, [newResponsesbody, newResponsesClass, newResponsesTitle])
+
+    useEffect(() => {
+      let sameSameError = 0
+      for (var i in responses){
+        if (newResponsesTitle === responses[i].title){
+          sameSameError = 1
+        } 
+      }
+      if (sameSameError === 1) {
+        setCanBeCreated(true)
+        setError("Title already used")
+      } else {
+        setError("")
+      }
+    }, [newResponsesTitle])
 
     useEffect(() => {
       updateFromDB()
@@ -341,25 +359,25 @@ export default function App() {
           </Box>
         
           <TabPanel value={tabValue} index={0}>
-            <ResponceOverView titles={allTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={6}>
-            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} />
+            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} />
           </TabPanel>
           <TabPanel value={tabValue} index={7}>
             <Box
@@ -409,7 +427,7 @@ export default function App() {
             </Box>
           </TabPanel>
         </Box>
-
+        
       </div>
     )
     
