@@ -359,25 +359,25 @@ export default function App() {
           </Box>
         
           <TabPanel value={tabValue} index={0}>
-            <ResponceOverView titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={6}>
-            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} />
+            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={7}>
             <Box
