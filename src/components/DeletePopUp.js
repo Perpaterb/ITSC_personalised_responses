@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Button from '@mui/material/Button';
 import "./deletePopUp.css";
-import { doc, deleteDoc} from 'firebase/firestore';
+import { doc, updateDoc} from 'firebase/firestore';
 const number1 = Math.floor(Math.random() * 10) + 1
 const number2 = Math.floor(Math.random() * 10) + 1
 
@@ -16,7 +16,8 @@ export default function DeletePopUp(props) {
   const deleteItem = async () => {
     if (currect === true) {
       const itemdoc = doc(props.db, "responses", props.itemID)
-      await deleteDoc(itemdoc)
+      const update = {updatedBy: props.userEmail, active: false}
+      await updateDoc(itemdoc , update)
       props.setPopUpActive(false)
       window.location.reload(false);
     }
