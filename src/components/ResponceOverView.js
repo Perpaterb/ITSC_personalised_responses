@@ -11,10 +11,10 @@ import UpdatePopUp from "./UpdatePopUp"
 
 function copy(text, name) {
 
-const greating  = "Hi ______, \n \n"
-const sightOff = "\n \nKind regards,\n" + name + "\nIT Support Centre"
-const allText = greating + text + sightOff
-navigator.clipboard.writeText(allText)
+    const greating  = "Hi ______, \n \n"
+    const sightOff = "\n \nKind regards,\n" + name + "\nIT Support Centre"
+    const allText = greating + text + sightOff
+    navigator.clipboard.writeText(allText)
 }
 
 export default function ResponceOverView(props) {
@@ -58,8 +58,8 @@ export default function ResponceOverView(props) {
 
     return (
         <div>
-        <DeletePopUp db={props.db} trigger={delPopUpActive} setPopUpActive={setDelPopUpActive} itemID={delPopUpActiveItemID}/>
-        <UpdatePopUp db={props.db} trigger={upPopUpActive} setPopUpActive={setUpPopUpActive} itemID={upPopUpActiveItemID} body={upPopUpActiveBody} userName={props.userName}/>
+        <DeletePopUp db={props.db} trigger={delPopUpActive} setPopUpActive={setDelPopUpActive} itemID={delPopUpActiveItemID} userEmail={props.userEmail}/>
+        <UpdatePopUp db={props.db} trigger={upPopUpActive} setPopUpActive={setUpPopUpActive} itemID={upPopUpActiveItemID} body={upPopUpActiveBody} userName={props.userName} userEmail={props.userEmail}/>
         <Box
             sx={{
             display: 'flex',

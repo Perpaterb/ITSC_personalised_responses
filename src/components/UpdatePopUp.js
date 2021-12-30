@@ -20,8 +20,8 @@ export default function UpdatePopUp(props) {
   const updateItem = async () => {
     if (currect === true) {
       const itemdoc = doc(props.db, "responses", props.itemID)
-      const newBody = { body: newResponsesbody }
-      await updateDoc(itemdoc , newBody)
+      const newUpdate = { body: newResponsesbody,  updatedBy: props.userEmail }
+      await updateDoc(itemdoc , newUpdate)
       props.setPopUpActive(false)
       window.location.reload(false);
     }

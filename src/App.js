@@ -134,7 +134,7 @@ export default function App() {
 
     const createResponses = async () => {
       if (canBeCreated === false){
-        await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle})
+        await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle , active: true, updatedBy: userEmail})
         updateFromDB()
         setTabValue(0)
       }
@@ -174,24 +174,25 @@ export default function App() {
       const referToCatalogueTitlesIndexTemp = []
       const insearchTitlesIndexTemp = []
     
-    
+      responses.sort((a, b) => a.title.localeCompare(b.title))
+      
       responses.map((responses , i) => {
-        if (responses.class === "Staff") {
+        if (responses.class === "Staff" & responses.active === true) {
           staffTitlesTemp.push(responses.title)
           staffTitlesIndexTemp.push(i)
-        } else if (responses.class === "Student") {
+        } else if (responses.class === "Student" & responses.active === true) {
           studentTitlesTemp.push(responses.title)
           studentTitlesIndexTemp.push(i)
-        } else if (responses.class === "To Close") {
+        } else if (responses.class === "To Close" & responses.active === true) {
           toCloseTitlesTemp.push(responses.title)
           toCloseTitlesIndexTemp.push(i)
-        } else if (responses.class === "Post-its") {
+        } else if (responses.class === "Post-its" & responses.active === true) {
           postItsTitlesTemp.push(responses.title)
           postItsTitlesIndexTemp.push(i)
-        } else if (responses.class === "Refer To Catalogue") {
+        } else if (responses.class === "Refer To Catalogue" & responses.active === true) {
           referToCatalogueTitlesTemp.push(responses.title)
           referToCatalogueTitlesIndexTemp.push(i)
-        } else if (responses.class === "Insearch") {
+        } else if (responses.class === "Insearch" & responses.active === true) {
           insearchTitlesTemp.push(responses.title)
           insearchTitlesIndexTemp.push(i)
         }
@@ -280,7 +281,9 @@ export default function App() {
       let sameSameError = 0
       for (var i in responses){
         if (newResponsesTitle === responses[i].title){
-          sameSameError = 1
+          if (responses[i].active === true) {
+            sameSameError = 1
+          }
         } 
       }
       if (sameSameError === 1) {
