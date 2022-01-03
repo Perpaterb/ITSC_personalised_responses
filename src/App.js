@@ -24,6 +24,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
+import Avatar from '@mui/material/Avatar';
+
+import merry from './static/Meredith.png';
 
 
 const db = getFirestore(app)
@@ -317,13 +320,14 @@ export default function App() {
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
+              <Avatar alt="Meredith" src={merry} sx={{ width: 56, height: 56 }}/>
                 <Typography
                   variant="h6"
                   noWrap
                   component="span"
                   sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
                 >
-                ITSC Personalised Responses
+                Personalised Rresponses
                 </Typography>
                   <Search>
                     <SearchIconWrapper>
