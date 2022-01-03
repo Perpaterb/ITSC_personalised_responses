@@ -12,3 +12,5 @@ This is my first play with google FireBase.
 Created in 4 night while on holidays over the Christmas brake 2021.  
 
 https://itsc-personalised-responses.herokuapp.com/
+
+This app will never need to be used on a mobile.
