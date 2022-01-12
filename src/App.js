@@ -327,7 +327,7 @@ export default function App() {
                   component="span"
                   sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
                 >
-                Personalised Rresponses
+                Personalised Responses
                 </Typography>
                   <Search>
                     <SearchIconWrapper>
