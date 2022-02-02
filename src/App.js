@@ -166,42 +166,44 @@ export default function App() {
     }
 
     function updateFromDB(){
-      //if (userEmail !== null){
-        //if (userEmail.endsWith('@uts.edu.au')){
-          if (window.localStorage.getItem("responsesAge") === null) {
-            const getResponses = async () => {
-              const data = await getDocs(responsesCollectionRef)
-              const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
-              setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
-              window.localStorage.setItem("responses", JSON.stringify(tempdata))
-              const d = new Date()
-              window.localStorage.setItem("responsesAge", d.getTime()/1000)
-              console.log("First time getting DB from server")
-            }
-            getResponses();
-          } else {
-            const tempTime = new Date()
-            if (((parseInt(window.localStorage.getItem("responsesAge")) +60) < tempTime.getTime()/1000)) {
-              const getResponses = async () => {
-                const data = await getDocs(responsesCollectionRef)
-                const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
-                setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
-                window.localStorage.setItem("responses", JSON.stringify(tempdata))
-                const d = new Date()
-                window.localStorage.setItem("responsesAge", d.getTime()/1000)
-              }
-              getResponses();
-              console.log("update response from DB")
- 
-            } else {           
-              setResponses(JSON.parse(window.localStorage.getItem("responses")))
-              console.log("get response from local: time left ",((parseInt(window.localStorage.getItem("responsesAge")) +60) - tempTime.getTime()/1000) , "secs")
-            }
-          }
+      forceUpdateDB()
 
-        }
-      //}// 
-    //}
+      // //if (userEmail !== null){
+      //   //if (userEmail.endsWith('@uts.edu.au')){
+      //     if (window.localStorage.getItem("responsesAge") === null) {
+      //       const getResponses = async () => {
+      //         const data = await getDocs(responsesCollectionRef)
+      //         const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+      //         setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+      //         window.localStorage.setItem("responses", JSON.stringify(tempdata))
+      //         const d = new Date()
+      //         window.localStorage.setItem("responsesAge", d.getTime()/1000)
+      //         console.log("First time getting DB from server")
+      //       }
+      //       getResponses();
+      //     } else {
+      //       const tempTime = new Date()
+      //       if (((parseInt(window.localStorage.getItem("responsesAge")) +60) < tempTime.getTime()/1000)) {
+      //         const getResponses = async () => {
+      //           const data = await getDocs(responsesCollectionRef)
+      //           const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+      //           setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+      //           window.localStorage.setItem("responses", JSON.stringify(tempdata))
+      //           const d = new Date()
+      //           window.localStorage.setItem("responsesAge", d.getTime()/1000)
+      //         }
+      //         getResponses();
+      //         console.log("update response from DB")
+ 
+      //       } else {           
+      //         setResponses(JSON.parse(window.localStorage.getItem("responses")))
+      //         console.log("get response from local: time left ",((parseInt(window.localStorage.getItem("responsesAge")) +60) - tempTime.getTime()/1000) , "secs")
+      //       }
+      //     }
+
+      //   }
+      // //}// 
+    }
 
    function forceUpdateDB (){
     const getResponses = async () => {
