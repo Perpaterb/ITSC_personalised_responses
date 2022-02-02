@@ -33,7 +33,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 //import merry from './static/Meredith.png';
 
 
-//const db = getFirestore(app)
+const db = getFirestore(app)
 
 
 
@@ -111,15 +111,15 @@ function a11yProps(index) {
 
 export default function App() {  
 
-    if (window.localStorage.getItem("matthewMode") === null) {
-      window.localStorage.setItem("matthewMode", false)
-    }
+    // if (window.localStorage.getItem("matthewMode") === null) {
+    //   window.localStorage.setItem("matthewMode", false)
+    // }
     
     const [matthewMode, setMatthewMode] = useState(false)
       
     const [tabValue, setTabValue] = useState(0)
 
-    const [db, setdb] = useState(getFirestore(app))
+    // const [db, setdb] = useState(getFirestore(app))
 
     const [newResponsesbody, setnewResponsesbody] = useState("")
     const [newResponsesClass, setnewResponsesClass] = useState("")
