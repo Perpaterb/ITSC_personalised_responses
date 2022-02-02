@@ -40,17 +40,15 @@ export default function DeletePopUp(props) {
           className="delete-button"
           onClick={deleteItem}
           > 
-          <h6>Delete</h6>
+          <h5>Delete</h5>
         </Button>
         
         <Button 
           className="close-button"
           onClick={() => {props.setPopUpActive(false)}}
           > 
-          <h6>Close</h6>
+          <h5>Close</h5>
         </Button>
-
-
       </div>
     </div>
   ) : ""
