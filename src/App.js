@@ -26,6 +26,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
+
+
 //import { TurnedInNot } from "@mui/icons-material";
 //import Avatar from '@mui/material/Avatar';
 //import merry from './static/Meredith.png';
@@ -87,7 +89,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component={'span'}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -426,6 +428,7 @@ export default function App() {
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
+           
               <FormControl sx={{ m: 1, minWidth: 120 }}>
                 <Select
                   value={matthewMode}
@@ -438,6 +441,7 @@ export default function App() {
                   <MenuItem value={true}>Support Notes</MenuItem>
                 </Select>
               </FormControl>
+              
                   <Search>
                     <SearchIconWrapper>
                       <SearchIcon />
@@ -519,6 +523,7 @@ export default function App() {
             >
                 <Box sx={{ width: '20%'}}>
                     <FormControl sx={{ width: '80%' }}>
+                    
                       <FormHelperText>Class</FormHelperText>
                       <Select
                           labelId="Title-select-label"
@@ -539,7 +544,7 @@ export default function App() {
                       
                       <FormHelperText>Title</FormHelperText>
                       <OutlinedInput onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
-                      <p sx={{ m: 1}}> </p>
+                      <span sx={{ m: 1}}> </span>
                       {(() => {
                         if (newResponsesClass !== "Support Note"){
                           return (
@@ -551,7 +556,7 @@ export default function App() {
                           )
                         }
                       })()}
-                      <p>{error}</p>
+                      <span>{error}</span>
                     </FormControl>
                 </Box>
 
