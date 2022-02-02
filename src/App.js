@@ -221,9 +221,9 @@ export default function App() {
    }
 
 
-    function handleTabChange (event, newValue) {
-      setTabValue(newValue)
-    };
+    const handleTabChange = (event, newValue) => {
+      setTabValue(newValue);
+    }
 
     function handleSearch(e) {
       getAllCounts(e)
