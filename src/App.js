@@ -4,7 +4,7 @@ import { collection, getDocs, addDoc} from 'firebase/firestore';
 import { getFirestore } from "@firebase/firestore";
 import GoogleAuth from "./components/GoogleAuth"
 import ResponceOverView from "./components/ResponceOverView"
-
+import ScrollToTop from "./components/ScrollToTop"
 
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
@@ -19,17 +19,21 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
+//import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormControl from "@mui/material/FormControl";
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
+import FormHelperText from '@mui/material/FormHelperText';
 
-import merry from './static/Meredith.png';
+//import { TurnedInNot } from "@mui/icons-material";
+//import Avatar from '@mui/material/Avatar';
+//import merry from './static/Meredith.png';
 
 
-const db = getFirestore(app)
+//const db = getFirestore(app)
+
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -103,7 +107,17 @@ function a11yProps(index) {
   };
 }
 
-export default function App() {
+export default function App() {  
+
+    if (window.localStorage.getItem("matthewMode") === null) {
+      window.localStorage.setItem("matthewMode", false)
+    }
+    
+    const [matthewMode, setMatthewMode] = useState(false)
+      
+    const [tabValue, setTabValue] = useState(0)
+
+    const [db, setdb] = useState(getFirestore(app))
 
     const [newResponsesbody, setnewResponsesbody] = useState("")
     const [newResponsesClass, setnewResponsesClass] = useState("")
@@ -125,6 +139,8 @@ export default function App() {
     const [postItsTabLable, setPostItsTabLable] = useState("Post-its")
     const [referToCatalogueTabLable, setReferToCatalogueTabLable] = useState("Refer To Catalogue")
     const [insearchTabLable, setInsearchTabLable] = useState("Insearch")
+    const [outageTabLable, setOutageTabLable] = useState("Outage")
+    const [supportTabLable, setSupportTabLable] = useState("Support")
 
     const [staffTitles, setStaffTitles] = useState([])
     const [studentTitles, setStudentTitles] = useState([])
@@ -132,33 +148,91 @@ export default function App() {
     const [postItsTitles, setPostItsTitles] = useState([])
     const [referToCatalogueTitles, setReferToCatalogueTitles] = useState([])
     const [insearchTitles, setInsearchTitles] = useState([])
+    const [outageTitles, setOutageTitles] = useState([])
+    const [supportTitles, setSupportTitles] = useState([])
     const [allTitles, setAllTitles] = useState([])
 
 
     const createResponses = async () => {
       if (canBeCreated === false){
         await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle , active: true, updatedBy: userEmail})
-        updateFromDB()
-        setTabValue(0)
+        forceUpdateDB()
+        if (matthewMode) {
+          setTabValue(0)
+        } else{
+          setTabValue(51)
+        }
       }
     }
 
     function updateFromDB(){
-        const getResponses = async () => {
-          const data = await getDocs(responsesCollectionRef)
-          setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
-      }
-      getResponses();
+      //if (userEmail !== null){
+        //if (userEmail.endsWith('@uts.edu.au')){
+          if (window.localStorage.getItem("responsesAge") === null) {
+            const getResponses = async () => {
+              const data = await getDocs(responsesCollectionRef)
+              const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+              setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+              window.localStorage.setItem("responses", JSON.stringify(tempdata))
+              const d = new Date()
+              window.localStorage.setItem("responsesAge", d.getTime()/1000)
+              console.log("First time getting DB from server")
+            }
+            getResponses();
+          } else {
+            const tempTime = new Date()
+            if (((parseInt(window.localStorage.getItem("responsesAge")) +60) < tempTime.getTime()/1000)) {
+              const getResponses = async () => {
+                const data = await getDocs(responsesCollectionRef)
+                const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+                setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+                window.localStorage.setItem("responses", JSON.stringify(tempdata))
+                const d = new Date()
+                window.localStorage.setItem("responsesAge", d.getTime()/1000)
+              }
+              getResponses();
+              console.log("update response from DB")
+ 
+            } else {           
+              setResponses(JSON.parse(window.localStorage.getItem("responses")))
+              console.log("get response from local: time left ",((parseInt(window.localStorage.getItem("responsesAge")) +60) - tempTime.getTime()/1000) , "secs")
+            }
+          }
+
+        }
+      //}// 
+    //}
+
+   function forceUpdateDB (){
+    const getResponses = async () => {
+      const data = await getDocs(responsesCollectionRef)
+      const tempdata = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+      setResponses(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+      window.localStorage.setItem("responses", JSON.stringify(tempdata))
+      const d = new Date()
+      window.localStorage.setItem("responsesAge", d.getTime()/1000)
     }
+    getResponses();
+    console.log("Force update response from DB")
+   }
 
-    const [tabValue, setTabValue] = useState(0);
 
-    const handleTabChange = (event, newValue) => {
-      setTabValue(newValue);
+    function handleTabChange (event, newValue) {
+      setTabValue(newValue)
     };
 
     function handleSearch(e) {
       getAllCounts(e)
+    }
+
+    function changeMode(e) {
+      setMatthewMode(e.target.value)
+      window.localStorage.setItem("matthewMode", e.target.value)
+      if (e.target.value) {
+        setTabValue(51)
+      }else{
+        setTabValue(0)
+      }
     }
     
     function getAllCounts(search) {
@@ -169,6 +243,8 @@ export default function App() {
       const postItsTitlesTemp = []
       const referToCatalogueTitlesTemp = []
       const insearchTitlesTemp = []
+      const outageTitlesTemp = []
+      const supportTitlesTemp = []
 
       const staffTitlesIndexTemp = []
       const studentTitlesIndexTemp = []
@@ -176,6 +252,8 @@ export default function App() {
       const postItsTitlesIndexTemp = []
       const referToCatalogueTitlesIndexTemp = []
       const insearchTitlesIndexTemp = []
+      const outageTitlesIndexTemp = []
+      const supportTitlesIndexTemp = []
     
       responses.sort((a, b) => a.title.localeCompare(b.title))
       
@@ -198,7 +276,13 @@ export default function App() {
         } else if (responses.class === "Insearch" & responses.active === true) {
           insearchTitlesTemp.push(responses.title)
           insearchTitlesIndexTemp.push(i)
-        }
+        } else if (responses.class === "Outage" & responses.active === true) {
+          outageTitlesTemp.push(responses.title)
+          outageTitlesIndexTemp.push(i)
+        } else if (responses.class === "Support Note" & responses.active === true) {
+          supportTitlesTemp.push(responses.title)
+          supportTitlesIndexTemp.push(i)
+        } 
         return (<></>)
       })
 
@@ -207,7 +291,9 @@ export default function App() {
       let toCloseTitlesTemp2 = toCloseTitlesIndexTemp
       let postItsTitlesTemp2 = postItsTitlesIndexTemp
       let referToCatalogueTitlesTemp2 = referToCatalogueTitlesIndexTemp
-      let insearchTitlesTemp2 = insearchTitlesIndexTemp  
+      let insearchTitlesTemp2 = insearchTitlesIndexTemp
+      let outageTitlesTemp2 = outageTitlesIndexTemp 
+      let supportTitlesTemp2 = supportTitlesIndexTemp 
       
       if (search !== "") {
         staffTitlesTemp2 = []
@@ -251,6 +337,20 @@ export default function App() {
             insearchTitlesTemp2.push(insearchTitlesIndexTemp[i])
           }
         }
+
+        outageTitlesTemp2 = []
+        for (let i in outageTitlesTemp){
+          if (outageTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            outageTitlesTemp2.push(outageTitlesIndexTemp[i])
+          }
+        }
+
+        supportTitlesTemp2 = []
+        for (let i in supportTitlesTemp){
+          if (supportTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            supportTitlesTemp2.push(supportTitlesIndexTemp[i])
+          }
+        }
       }
 
       setStaffTitles(staffTitlesTemp2)
@@ -259,15 +359,19 @@ export default function App() {
       setPostItsTitles(postItsTitlesTemp2)
       setReferToCatalogueTitles(referToCatalogueTitlesTemp2)
       setInsearchTitles(insearchTitlesTemp2)
-      setAllTitles(staffTitlesTemp2.concat(studentTitlesTemp2).concat(toCloseTitlesTemp2).concat(postItsTitlesTemp2).concat(referToCatalogueTitlesTemp2).concat(insearchTitlesTemp2))
+      setOutageTitles(outageTitlesTemp2)
+      setSupportTitles(supportTitlesTemp2)
+      setAllTitles(staffTitlesTemp2.concat(studentTitlesTemp2).concat(toCloseTitlesTemp2).concat(postItsTitlesTemp2).concat(referToCatalogueTitlesTemp2).concat(insearchTitlesTemp2).concat(outageTitlesTemp2))
 
-      setAllTabLable("All (" + (staffTitlesTemp2.length + studentTitlesTemp2.length + toCloseTitlesTemp2.length + postItsTitlesTemp2.length + referToCatalogueTitlesTemp2.length + insearchTitlesTemp2.length) + ")")
+      setAllTabLable("All (" + (staffTitlesTemp2.length + studentTitlesTemp2.length + toCloseTitlesTemp2.length + postItsTitlesTemp2.length + referToCatalogueTitlesTemp2.length + insearchTitlesTemp2.length + outageTitlesTemp2.length) + ")")
       setStaffTabLable("Staff (" +  staffTitlesTemp2.length + ")")
       setStudentTabLable("Student (" +  studentTitlesTemp2.length + ")")
       setToCloseTabLable("To Close (" +  toCloseTitlesTemp2.length + ")")
       setPostItsTabLable("Post-its (" +  postItsTitlesTemp2.length + ")")
       setReferToCatalogueTabLable("Refer To Catalogue (" +  referToCatalogueTitlesTemp2.length + ")")
-      setInsearchTabLable("Insearch0 (" +  insearchTitlesTemp2.length + ")")
+      setInsearchTabLable("Insearch (" +  insearchTitlesTemp2.length + ")")
+      setOutageTabLable("Outage (" +  outageTitlesTemp2.length + ")")
+      setSupportTabLable("Support Notes (" +  supportTitlesTemp2.length + ")")
     }
 
     useEffect(() => {
@@ -320,15 +424,18 @@ export default function App() {
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <Avatar alt="Meredith" src={merry} sx={{ width: 56, height: 56 }}/>
-                <Typography
-                  variant="h6"
-                  noWrap
-                  component="span"
-                  sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+              <FormControl sx={{ m: 1, minWidth: 120 }}>
+                <Select
+                  value={matthewMode}
+                  onChange={changeMode}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Without label' }}
+                  sx={{fontSize: 20, backgroundColor: "#ffffff", minWidth: 300, textAlign: "center"}}
                 >
-                Personalised Responses
-                </Typography>
+                  <MenuItem value={false}>Personalised Responses</MenuItem>
+                  <MenuItem value={true}>Support Notes</MenuItem>
+                </Select>
+              </FormControl>
                   <Search>
                     <SearchIconWrapper>
                       <SearchIcon />
@@ -348,17 +455,21 @@ export default function App() {
         <Box sx={{ width: '100%' }}>
           <Box display="flex" justifyContent="center" alignItems="center" sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="Class">
-              <Tab label={allTabLable} {...a11yProps(0)} />
-              <Tab label={staffTabLable} {...a11yProps(1)} />
-              <Tab label={studentTabLable} {...a11yProps(2)} />
-              <Tab label={toCloseTabLable} {...a11yProps(3)} />
-              <Tab label={postItsTabLable} {...a11yProps(4)} />
-              <Tab label={referToCatalogueTabLable} {...a11yProps(5)} />
-              <Tab label={insearchTabLable} {...a11yProps(6)} />
+              {(() => { if (matthewMode === false){  return ( <Tab value={0} label={allTabLable} {...a11yProps(0)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={1} label={staffTabLable} {...a11yProps(1)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={2} label={studentTabLable} {...a11yProps(2)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={3} label={toCloseTabLable} {...a11yProps(3)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={4} label={postItsTabLable} {...a11yProps(4)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={5} label={referToCatalogueTabLable} {...a11yProps(5)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={6} label={insearchTabLable} {...a11yProps(6)} />) } })()}
+              {(() => { if (matthewMode === false){  return ( <Tab value={7} label={outageTabLable} {...a11yProps(7)} />) } })()}
+
+              {(() => { if (matthewMode === true){  return ( <Tab value={51} label={supportTabLable} {...a11yProps(51)} />) } })()}
+
               {(() => {
                 if (userEmail !== null){
                   if (userEmail.endsWith('@uts.edu.au')){
-                    return (<Tab label="Create New" {...a11yProps(7)} />)
+                    return (<Tab value={99} label="Create New" {...a11yProps(99)} />)
                   }
                 } 
               })()}
@@ -366,27 +477,35 @@ export default function App() {
           </Box>
         
           <TabPanel value={tabValue} index={0}>
-            <ResponceOverView titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <ResponceOverView titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <ResponceOverView titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <ResponceOverView titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            <ResponceOverView titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            <ResponceOverView titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={6}>
-            <ResponceOverView titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={7}>
+            <ResponceOverView type={"respoonse"} titles={outageTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+          </TabPanel>
+
+          <TabPanel value={tabValue} index={51}>
+            <ResponceOverView type={"support"} titles={supportTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+          </TabPanel>
+
+          <TabPanel value={tabValue} index={99}>
             <Box
                 sx={{
                 display: 'flex',
@@ -398,13 +517,13 @@ export default function App() {
             >
                 <Box sx={{ width: '20%'}}>
                     <FormControl sx={{ width: '80%' }}>
-                      <InputLabel id="selest-lable">Class</InputLabel>
+                      <FormHelperText>Class</FormHelperText>
                       <Select
                           labelId="Title-select-label"
                           id="select"
                           value={newResponsesClass}
-                          label="Class"
                           onChange={(event) => {setnewResponsesClass(event.target.value)}}
+                          inputProps={{ 'aria-label': 'Class' }}
                       >
                         <MenuItem value="Staff">Staff</MenuItem>
                         <MenuItem value="Student">Student</MenuItem>
@@ -412,29 +531,61 @@ export default function App() {
                         <MenuItem value="Post-its">Post-its</MenuItem>
                         <MenuItem value="Refer To Catalogue">Refer To Catalogue</MenuItem>
                         <MenuItem value="Insearch">Insearch</MenuItem>
+                        <MenuItem value="Outage">Outage</MenuItem>
+                        <MenuItem value="Support Note">Support Note</MenuItem>
                       </Select>
-                      <OutlinedInput placeholder="Title" onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
-                      <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
+                      
+                      <FormHelperText>Title</FormHelperText>
+                      <OutlinedInput onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
+                      <p sx={{ m: 1}}> </p>
+                      {(() => {
+                        if (newResponsesClass !== "Support Note"){
+                          return (
+                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
+                          )
+                        } else {
+                          return (
+                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Support Note</Button>
+                          )
+                        }
+                      })()}
                       <p>{error}</p>
                     </FormControl>
                 </Box>
 
-                <Box sx={{ width: '75%', maxWidth: '800px' }}>
-                  <p>Hi ______,<b/></p>
-                  <TextareaAutosize
-                    aria-label="textarea"
-                    placeholder="Empty"
-                    style={{ width: "100%" }}
-                    onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-                  />
-                  <p>Kind regards,</p>
-                  <p>{userName}</p>
-                  <p>IT Support Centre</p>
-                </Box>
+                {(() => {
+                  if (newResponsesClass !== "Support Note"){
+                    return (
+                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                        <p>Hi ______,<b/></p>
+                        <TextareaAutosize
+                          aria-label="textarea"
+                          placeholder="Empty"
+                          style={{ width: "100%" }}
+                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                        />
+                        <p>Kind regards,</p>
+                        <p>{userName}</p>
+                        <p>IT Support Centre</p>
+                        </Box>
+                    )
+                  } else {
+                    return (
+                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                        <TextareaAutosize
+                          aria-label="textarea"
+                          placeholder="Empty"
+                          style={{ width: "100%" }}
+                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                        />
+                      </Box>
+                    )
+                  }
+                })()}
             </Box>
           </TabPanel>
         </Box>
-        
+        <ScrollToTop/> 
       </div>
     )
     
