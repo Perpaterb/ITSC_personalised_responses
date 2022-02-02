@@ -83,7 +83,7 @@ export default function ResponceOverView(props) {
             </Box>
             <Box sx={{ width: '75%', maxWidth: '900px'}}>
                 {props.titles.map((item) => (
-                    <ListItem key={item+"LI2"} ref={refs[props.responses[item].id]} component="div" disablePadding>
+                    <ListItem key={item+"LI2"} ref={refs[props.responses[item].id]} component="div" disablePadding sx={{p: 1}}>
                         {/* <ListItem> */}
                             {(() => {
                                 if (props.type !== "support"){
