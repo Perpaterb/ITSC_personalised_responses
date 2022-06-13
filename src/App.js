@@ -26,6 +26,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
+import RefreshButton from "./components/refreshButton";
+
 
 
 //import { TurnedInNot } from "@mui/icons-material";
@@ -128,6 +130,8 @@ export default function App() {
     const [canBeCreated, setCanBeCreated] = useState(false)
     const [error, setError] = useState("")
 
+    const [searchValue, setSearchValue] = useState("")
+
     const [userEmail, setUserEmail] = useState("")
     const [userName, setUserName] = useState("")
 
@@ -158,11 +162,19 @@ export default function App() {
     const createResponses = async () => {
       if (canBeCreated === false){
         await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle , active: true, updatedBy: userEmail})
-        forceUpdateDB()
+        //forceUpdateDB()
+        setnewResponsesTitle("")
+        setnewResponsesbody("")
+        getAllCounts("")
+        setSearchValue("")
+        
+        console.log("matthewMode: ", matthewMode, "     tabValue: ",tabValue)
+
         if (matthewMode) {
-          setTabValue(0)
-        } else{
           setTabValue(51)
+        } else{
+
+          setTabValue(0)
         }
       }
     }
@@ -227,12 +239,13 @@ export default function App() {
 
     function handleSearch(e) {
       getAllCounts(e)
+      setSearchValue(e)
     }
 
     function changeMode(e) {
-      setMatthewMode(e.target.value)
-      window.localStorage.setItem("matthewMode", e.target.value)
-      if (e.target.value) {
+      setMatthewMode(e)
+      window.localStorage.setItem("matthewMode", e)
+      if (e) {
         setTabValue(51)
       }else{
         setTabValue(0)
@@ -432,7 +445,7 @@ export default function App() {
               <FormControl sx={{ m: 1, minWidth: 120 }}>
                 <Select
                   value={matthewMode}
-                  onChange={changeMode}
+                  onChange={(e) => changeMode(e.target.value)}
                   displayEmpty
                   inputProps={{ 'aria-label': 'Without label' }}
                   sx={{fontSize: 20, backgroundColor: "#ffffff", minWidth: 300, textAlign: "center"}}
@@ -441,17 +454,20 @@ export default function App() {
                   <MenuItem value={true}>Support Notes</MenuItem>
                 </Select>
               </FormControl>
-              
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                      onChange={(e) => handleSearch(e.target.value)}
-                      placeholder="Search…"
-                      inputProps={{ 'aria-label': 'search' }}
-                    />
-                  </Search>
+              <RefreshButton refreshDBFunction={forceUpdateDB}/>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <FormControl>
+                  <StyledInputBase
+                    onChange={(e) => handleSearch(e.target.value)}
+                    placeholder="Search…"
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={searchValue}
+                  />
+                </FormControl>
+              </Search>
               <Box sx={{ flexGrow: 1 }}/>
               <GoogleAuth/>
             </Toolbar>
