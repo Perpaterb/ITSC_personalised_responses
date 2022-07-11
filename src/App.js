@@ -117,7 +117,7 @@ export default function App() {
     //   window.localStorage.setItem("matthewMode", false)
     // }
     
-    const [matthewMode, setMatthewMode] = useState(false)
+    const [matthewMode, setMatthewMode] = useState(0)
       
     const [tabValue, setTabValue] = useState(0)
 
@@ -147,6 +147,7 @@ export default function App() {
     const [insearchTabLable, setInsearchTabLable] = useState("Insearch")
     const [outageTabLable, setOutageTabLable] = useState("Outage")
     const [supportTabLable, setSupportTabLable] = useState("Support")
+    const [contactTabLable, setContactTabLable] = useState("Contact")
 
     const [staffTitles, setStaffTitles] = useState([])
     const [studentTitles, setStudentTitles] = useState([])
@@ -156,6 +157,7 @@ export default function App() {
     const [insearchTitles, setInsearchTitles] = useState([])
     const [outageTitles, setOutageTitles] = useState([])
     const [supportTitles, setSupportTitles] = useState([])
+    const [contactTitles, setContactTitles] = useState([])
     const [allTitles, setAllTitles] = useState([])
 
 
@@ -168,13 +170,14 @@ export default function App() {
         getAllCounts("")
         setSearchValue("")
         
-        console.log("matthewMode: ", matthewMode, "     tabValue: ",tabValue)
+        //console.log("matthewMode: ", matthewMode, "     tabValue: ",tabValue)
 
-        if (matthewMode) {
-          setTabValue(51)
-        } else{
-
+        if (matthewMode === 0) {
           setTabValue(0)
+        } else if( matthewMode === 1){
+          setTabValue(51)
+        } else {
+          setTabValue(52)
         }
       }
     }
@@ -245,10 +248,12 @@ export default function App() {
     function changeMode(e) {
       setMatthewMode(e)
       window.localStorage.setItem("matthewMode", e)
-      if (e) {
-        setTabValue(51)
-      }else{
+      if (e === 0) {
         setTabValue(0)
+      }else if (e === 1){
+        setTabValue(51)
+      } else {
+        setTabValue(52)
       }
     }
     
@@ -262,6 +267,7 @@ export default function App() {
       const insearchTitlesTemp = []
       const outageTitlesTemp = []
       const supportTitlesTemp = []
+      const contactTitlesTemp = []
 
       const staffTitlesIndexTemp = []
       const studentTitlesIndexTemp = []
@@ -271,6 +277,7 @@ export default function App() {
       const insearchTitlesIndexTemp = []
       const outageTitlesIndexTemp = []
       const supportTitlesIndexTemp = []
+      const contactTitlesIndexTemp = []
     
       responses.sort((a, b) => a.title.localeCompare(b.title))
       
@@ -299,6 +306,9 @@ export default function App() {
         } else if (responses.class === "Support Note" & responses.active === true) {
           supportTitlesTemp.push(responses.title)
           supportTitlesIndexTemp.push(i)
+        } else if (responses.class === "Contact" & responses.active === true) {
+          contactTitlesTemp.push(responses.title)
+          contactTitlesIndexTemp.push(i)
         } 
         return (<></>)
       })
@@ -310,7 +320,8 @@ export default function App() {
       let referToCatalogueTitlesTemp2 = referToCatalogueTitlesIndexTemp
       let insearchTitlesTemp2 = insearchTitlesIndexTemp
       let outageTitlesTemp2 = outageTitlesIndexTemp 
-      let supportTitlesTemp2 = supportTitlesIndexTemp 
+      let supportTitlesTemp2 = supportTitlesIndexTemp
+      let contactTitlesTemp2 = contactTitlesIndexTemp 
       
       if (search !== "") {
         staffTitlesTemp2 = []
@@ -368,6 +379,13 @@ export default function App() {
             supportTitlesTemp2.push(supportTitlesIndexTemp[i])
           }
         }
+
+        contactTitlesTemp2 = []
+        for (let i in contactTitlesTemp){
+          if (contactTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            contactTitlesTemp2.push(contactTitlesIndexTemp[i])
+          }
+        }
       }
 
       setStaffTitles(staffTitlesTemp2)
@@ -378,6 +396,7 @@ export default function App() {
       setInsearchTitles(insearchTitlesTemp2)
       setOutageTitles(outageTitlesTemp2)
       setSupportTitles(supportTitlesTemp2)
+      setContactTitles(contactTitlesTemp2)
       setAllTitles(staffTitlesTemp2.concat(studentTitlesTemp2).concat(toCloseTitlesTemp2).concat(postItsTitlesTemp2).concat(referToCatalogueTitlesTemp2).concat(insearchTitlesTemp2).concat(outageTitlesTemp2))
 
       setAllTabLable("All (" + (staffTitlesTemp2.length + studentTitlesTemp2.length + toCloseTitlesTemp2.length + postItsTitlesTemp2.length + referToCatalogueTitlesTemp2.length + insearchTitlesTemp2.length + outageTitlesTemp2.length) + ")")
@@ -389,6 +408,7 @@ export default function App() {
       setInsearchTabLable("Insearch (" +  insearchTitlesTemp2.length + ")")
       setOutageTabLable("Outage (" +  outageTitlesTemp2.length + ")")
       setSupportTabLable("Support Notes (" +  supportTitlesTemp2.length + ")")
+      setContactTabLable("Contacts (" +  contactTitlesTemp2.length + ")")
     }
 
     useEffect(() => {
@@ -450,8 +470,9 @@ export default function App() {
                   inputProps={{ 'aria-label': 'Without label' }}
                   sx={{fontSize: 20, backgroundColor: "#ffffff", minWidth: 300, textAlign: "center"}}
                 >
-                  <MenuItem value={false}>Personalised Responses</MenuItem>
-                  <MenuItem value={true}>Support Notes</MenuItem>
+                  <MenuItem value={0}>Personalised Responses</MenuItem>
+                  <MenuItem value={1}>Support Notes</MenuItem>
+                  <MenuItem value={2}>Contacts</MenuItem>
                 </Select>
               </FormControl>
               <RefreshButton refreshDBFunction={forceUpdateDB}/>
@@ -477,16 +498,18 @@ export default function App() {
         <Box sx={{ width: '100%' }}>
           <Box display="flex" justifyContent="center" alignItems="center" sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="Class">
-              {(() => { if (matthewMode === false){  return ( <Tab value={0} label={allTabLable} {...a11yProps(0)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={1} label={staffTabLable} {...a11yProps(1)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={2} label={studentTabLable} {...a11yProps(2)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={3} label={toCloseTabLable} {...a11yProps(3)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={4} label={postItsTabLable} {...a11yProps(4)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={5} label={referToCatalogueTabLable} {...a11yProps(5)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={6} label={insearchTabLable} {...a11yProps(6)} />) } })()}
-              {(() => { if (matthewMode === false){  return ( <Tab value={7} label={outageTabLable} {...a11yProps(7)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={0} label={allTabLable} {...a11yProps(0)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={1} label={staffTabLable} {...a11yProps(1)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={2} label={studentTabLable} {...a11yProps(2)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={3} label={toCloseTabLable} {...a11yProps(3)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={4} label={postItsTabLable} {...a11yProps(4)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={5} label={referToCatalogueTabLable} {...a11yProps(5)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={6} label={insearchTabLable} {...a11yProps(6)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={7} label={outageTabLable} {...a11yProps(7)} />) } })()}
 
-              {(() => { if (matthewMode === true){  return ( <Tab value={51} label={supportTabLable} {...a11yProps(51)} />) } })()}
+              {(() => { if (matthewMode === 1){  return ( <Tab value={51} label={supportTabLable} {...a11yProps(51)} />) } })()}
+
+              {(() => { if (matthewMode === 2){  return ( <Tab value={52} label={contactTabLable} {...a11yProps(52)} />) } })()}
 
               {(() => {
                 if (userEmail !== null){
@@ -527,6 +550,10 @@ export default function App() {
             <ResponceOverView type={"support"} titles={supportTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
 
+          <TabPanel value={tabValue} index={52}>
+            <ResponceOverView type={"contact"} titles={contactTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+          </TabPanel>
+
           <TabPanel value={tabValue} index={99}>
             <Box
                 sx={{
@@ -556,19 +583,24 @@ export default function App() {
                         <MenuItem value="Insearch">Insearch</MenuItem>
                         <MenuItem value="Outage">Outage</MenuItem>
                         <MenuItem value="Support Note">Support Note</MenuItem>
+                        <MenuItem value="Contact">Contact</MenuItem>
                       </Select>
                       
                       <FormHelperText>Title</FormHelperText>
                       <OutlinedInput onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
                       <span sx={{ m: 1}}> </span>
                       {(() => {
-                        if (newResponsesClass !== "Support Note"){
+                        if (newResponsesClass === "Contact"){
                           return (
-                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
+                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Contact listing</Button>
+                          )
+                        } else if (newResponsesClass === "Support Note"){
+                          return (
+                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Support Note</Button>
                           )
                         } else {
                           return (
-                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Support Note</Button>
+                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
                           )
                         }
                       })()}
@@ -577,7 +609,29 @@ export default function App() {
                 </Box>
 
                 {(() => {
-                  if (newResponsesClass !== "Support Note"){
+                  if (newResponsesClass === "Contact"){
+                    return (
+                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                        <TextareaAutosize
+                          aria-label="textarea"
+                          placeholder="Empty"
+                          style={{ width: "100%" }}
+                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                        />
+                      </Box>
+                    )
+                  } else if (newResponsesClass === "Support Note") {
+                    return (
+                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                        <TextareaAutosize
+                          aria-label="textarea"
+                          placeholder="Empty"
+                          style={{ width: "100%" }}
+                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                        />
+                      </Box>
+                    )
+                  } else {
                     return (
                       <Box sx={{ width: '75%', maxWidth: '800px' }}>
                         <p>Hi ______,<b/></p>
@@ -591,17 +645,6 @@ export default function App() {
                         <p>{userName}</p>
                         <p>IT Support Centre</p>
                         </Box>
-                    )
-                  } else {
-                    return (
-                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
-                        <TextareaAutosize
-                          aria-label="textarea"
-                          placeholder="Empty"
-                          style={{ width: "100%" }}
-                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-                        />
-                      </Box>
                     )
                   }
                 })()}

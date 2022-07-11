@@ -18,13 +18,15 @@ export default function ResponceOverView(props) {
     const [upPopUpActiveBody, setUpPopUpActiveBody] = useState("")
 
     function copy(text, name) {
-        if (props.type !== "support") {
+        if (props.type === "contact") {
+            navigator.clipboard.writeText(text)
+        } else if (props.type === "support"){
+            navigator.clipboard.writeText(text)
+        } else {
             const greating  = "Hi ______, \n \n"
             const sightOff = "\n \nKind regards,\n" + name + "\nIT Support Centre"
             const allText = greating + text + sightOff
             navigator.clipboard.writeText(allText)
-        } else {
-            navigator.clipboard.writeText(text)
         }
     }
 
@@ -86,21 +88,21 @@ export default function ResponceOverView(props) {
                     <ListItem key={item+"LI2"} ref={refs[props.responses[item].id]} component="div" disablePadding sx={{p: 1}}>
                         {/* <ListItem> */}
                             {(() => {
-                                if (props.type !== "support"){
+                                if (props.type === "contact"){
                                     return (
-                                        <Box key={item+"box1"} sx={{bgcolor: "#fdfdf1", p: 1, maxWidth: '900px'}}>
+                                        <Box key={item+"box2"} sx={{bgcolor: "#fdf1fd", p: 1, maxWidth: '900px'}}>
                                             <h2 dangerouslySetInnerHTML={{ __html: props.responses[item].title}}/>
                                             <span dangerouslySetInnerHTML={{ __html: props.responses[item].body}}/>
                                             {(() => {
                                                 if (autherised === true){
                                                     return (
                                                         <div>
-                                                            <Button key={item+"button1"} 
+                                                            <Button key={item+"button4"}
                                                                 onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '140px',top: '20px'}}>
                                                                 <h4>Edit</h4>
                                                             </Button>
-                                                            <Button key={item+"button2"}
+                                                            <Button key={item+"button5"}
                                                                 onClick={() => {setDelPopUpStates(true, props.responses[item].id)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '210px',top: '20px'}}>
                                                                 <h4>Delete</h4>
@@ -109,14 +111,14 @@ export default function ResponceOverView(props) {
                                                     )
                                                 } 
                                             })()}
-                                            <Button key={item+"button3"}
+                                            <Button key={item+"button6"}
                                                 onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName)}} 
                                                 style={{height: '40px' , backgroundColor: '#205055',position: 'absolute', right: '10px',top: '20px'}}>
                                                 <h4>Copy</h4>
                                             </Button>
                                         </Box>
                                     )
-                                } else {
+                                } else if (props.type === "support") {
                                     return (
                                         <Box key={item+"box2"} sx={{bgcolor: "#f1fdfd", p: 1, maxWidth: '900px'}}>
                                             <h2 dangerouslySetInnerHTML={{ __html: props.responses[item].title}}/>
@@ -146,6 +148,36 @@ export default function ResponceOverView(props) {
                                             </Button>
                                         </Box>
                                     ) 
+                                } else {
+                                    return (
+                                        <Box key={item+"box1"} sx={{bgcolor: "#fdfdf1", p: 1, maxWidth: '900px'}}>
+                                            <h2 dangerouslySetInnerHTML={{ __html: props.responses[item].title}}/>
+                                            <span dangerouslySetInnerHTML={{ __html: props.responses[item].body}}/>
+                                            {(() => {
+                                                if (autherised === true){
+                                                    return (
+                                                        <div>
+                                                            <Button key={item+"button1"} 
+                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body)}} 
+                                                                style={{height: '40px' ,position: 'absolute', right: '140px',top: '20px'}}>
+                                                                <h4>Edit</h4>
+                                                            </Button>
+                                                            <Button key={item+"button2"}
+                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id)}} 
+                                                                style={{height: '40px' ,position: 'absolute', right: '210px',top: '20px'}}>
+                                                                <h4>Delete</h4>
+                                                            </Button>
+                                                        </div>
+                                                    )
+                                                } 
+                                            })()}
+                                            <Button key={item+"button3"}
+                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName)}} 
+                                                style={{height: '40px' , backgroundColor: '#205055',position: 'absolute', right: '10px',top: '20px'}}>
+                                                <h4>Copy</h4>
+                                            </Button>
+                                        </Box>
+                                    )
                                 }
                             })()}
                         {/* </ListItem> */}
