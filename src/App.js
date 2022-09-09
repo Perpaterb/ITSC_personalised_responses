@@ -27,15 +27,17 @@ import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import RefreshButton from "./components/refreshButton";
+import AddGoogleAnalytics from "./components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
+
+import ReactGA from "react-ga";
 
 
 
-//import { TurnedInNot } from "@mui/icons-material";
-//import Avatar from '@mui/material/Avatar';
-//import merry from './static/Meredith.png';
-
+const TRACKING_ID = "G-QFVLBDD92N"; // google tracking ID
 
 const db = getFirestore(app)
+
+ReactGA.initialize(TRACKING_ID);
 
 
 
@@ -164,6 +166,8 @@ export default function App() {
     const createResponses = async () => {
       if (canBeCreated === false){
         await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle , active: true, updatedBy: userEmail})
+        
+        AddGoogleAnalytics(newResponsesClass, "Cteate New", newResponsesTitle, userEmail)
         //forceUpdateDB()
         setnewResponsesTitle("")
         setnewResponsesbody("")
@@ -179,6 +183,7 @@ export default function App() {
         } else {
           setTabValue(52)
         }
+        
       }
     }
 
@@ -235,26 +240,78 @@ export default function App() {
     console.log("Force update response from DB")
    }
 
-
     const handleTabChange = (event, newValue) => {
+      let tabName = ""
+      switch(newValue){
+        case 0:
+          tabName = "All"
+          break;
+        case 1:
+          tabName = "Staff"
+          break;
+        case 2:
+          tabName = "Student"
+          break;
+        case 3:
+          tabName = "To Close"
+          break;
+        case 4:
+          tabName = "Post-its"
+          break;
+        case 5:
+          tabName = "Refer To Catalogue"
+          break;
+        case 6:
+          tabName = "Insearch"
+          break;
+        case 7:
+          tabName = "Outage"
+          break;
+        case 51:
+          tabName = "Support Note"
+          break;
+        case 52:
+          tabName = "Contact"
+          break;
+        case 99:
+          tabName = "Create New"
+          break;
+        default:
+      }
       setTabValue(newValue);
+      ReactGA.pageview(tabName, [userEmail])
     }
 
     function handleSearch(e) {
       getAllCounts(e)
       setSearchValue(e)
+
+      let pageName = ""
+      if (matthewMode === 0) {
+        pageName = "respoonse"
+      }else if (matthewMode === 1){
+        pageName = "support"
+      } else {
+        pageName = "contacts"
+      }
+      AddGoogleAnalytics(pageName, "search", e, userEmail)
     }
 
     function changeMode(e) {
       setMatthewMode(e)
       window.localStorage.setItem("matthewMode", e)
+      let pageName = ""
       if (e === 0) {
         setTabValue(0)
+        pageName = "responses"
       }else if (e === 1){
         setTabValue(51)
+        pageName = "support"
       } else {
         setTabValue(52)
+        pageName = "contacts"
       }
+      ReactGA.pageview(pageName, [userEmail])
     }
     
     function getAllCounts(search) {
