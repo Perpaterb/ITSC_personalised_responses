@@ -33,10 +33,10 @@ import ReactGA from "react-ga";
 
 
 
-const TRACKING_ID = "G-QFVLBDD92N"; // google tracking ID
 
 const db = getFirestore(app)
 
+const TRACKING_ID = "G-GESTQDBWTW"; // google tracking ID
 ReactGA.initialize(TRACKING_ID);
 
 
