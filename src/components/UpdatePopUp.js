@@ -5,6 +5,8 @@ import "./updatePopUp.css";
 import { doc, updateDoc} from 'firebase/firestore';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 
+import AddGoogleAnalytics from "../components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
+
 const number1 = Math.floor(Math.random() * 10) + 1
 const number2 = Math.floor(Math.random() * 10) + 1
 
@@ -24,6 +26,7 @@ export default function UpdatePopUp(props) {
       await updateDoc(itemdoc , newUpdate)
       props.setPopUpActive(false)
       window.location.reload(false);
+      AddGoogleAnalytics(props.type, "Update", props.title, props.userEmail)
     }
   }
 

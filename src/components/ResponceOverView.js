@@ -7,17 +7,20 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import DeletePopUp from "./DeletePopUp"
 import UpdatePopUp from "./UpdatePopUp"
+import AddGoogleAnalytics from "../components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
 
 
 export default function ResponceOverView(props) {
 
     const [delPopUpActive, setDelPopUpActive] = useState(false)
     const [delPopUpActiveItemID, setDelPopUpActiveItemID] = useState("")
+    const [delPopUpActiveTitle, setDelPopUpActiveTitle] = useState("")
     const [upPopUpActive, setUpPopUpActive] = useState(false)
     const [upPopUpActiveItemID, setUpPopUpActiveItemID] = useState("")
     const [upPopUpActiveBody, setUpPopUpActiveBody] = useState("")
+    const [upPopUpActiveTitle, setUpPopUpActiveTitle] = useState("")
 
-    function copy(text, name) {
+    function copy(text, name, title) {
         if (props.type === "contact") {
             navigator.clipboard.writeText(text)
         } else if (props.type === "support"){
@@ -28,17 +31,20 @@ export default function ResponceOverView(props) {
             const allText = greating + text + sightOff
             navigator.clipboard.writeText(allText)
         }
+        AddGoogleAnalytics(props.type, "Copy", title, props.userEmail)
     }
 
-    function setDelPopUpStates(active, id) {
+    function setDelPopUpStates(active, id, title) {
         setDelPopUpActive(active)
         setDelPopUpActiveItemID(id)
+        setDelPopUpActiveTitle(title)
     }
 
-    function setUpPopUpStates(active, id, body) {
+    function setUpPopUpStates(active, id, body, title) {
         setUpPopUpActive(active)
         setUpPopUpActiveItemID(id)
         setUpPopUpActiveBody(body)
+        setUpPopUpActiveTitle(title)
     }
 
     let autherised = false
@@ -63,8 +69,8 @@ export default function ResponceOverView(props) {
 
     return (
         <div>
-        <DeletePopUp db={props.db} trigger={delPopUpActive} setPopUpActive={setDelPopUpActive} itemID={delPopUpActiveItemID} userEmail={props.userEmail}/>
-        <UpdatePopUp type={props.type} db={props.db} trigger={upPopUpActive} setPopUpActive={setUpPopUpActive} itemID={upPopUpActiveItemID} body={upPopUpActiveBody} userName={props.userName} userEmail={props.userEmail}/>
+        <DeletePopUp type={props.type} db={props.db} trigger={delPopUpActive} setPopUpActive={setDelPopUpActive} itemID={delPopUpActiveItemID} title={delPopUpActiveTitle} userEmail={props.userEmail}/>
+        <UpdatePopUp type={props.type} db={props.db} trigger={upPopUpActive} setPopUpActive={setUpPopUpActive} itemID={upPopUpActiveItemID} title={upPopUpActiveTitle} body={upPopUpActiveBody} userName={props.userName} userEmail={props.userEmail}/>
         <Box
             sx={{
             display: 'flex',
@@ -98,12 +104,12 @@ export default function ResponceOverView(props) {
                                                     return (
                                                         <div>
                                                             <Button key={item+"button4"}
-                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body)}} 
+                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '140px',top: '20px'}}>
                                                                 <h4>Edit</h4>
                                                             </Button>
                                                             <Button key={item+"button5"}
-                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id)}} 
+                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '210px',top: '20px'}}>
                                                                 <h4>Delete</h4>
                                                             </Button>
@@ -112,7 +118,7 @@ export default function ResponceOverView(props) {
                                                 } 
                                             })()}
                                             <Button key={item+"button6"}
-                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName)}} 
+                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName, props.responses[item].title)}} 
                                                 style={{height: '40px' , backgroundColor: '#205055',position: 'absolute', right: '10px',top: '20px'}}>
                                                 <h4>Copy</h4>
                                             </Button>
@@ -128,12 +134,12 @@ export default function ResponceOverView(props) {
                                                     return (
                                                         <div>
                                                             <Button key={item+"button4"}
-                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body)}} 
+                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '140px',top: '20px'}}>
                                                                 <h4>Edit</h4>
                                                             </Button>
                                                             <Button key={item+"button5"}
-                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id)}} 
+                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '210px',top: '20px'}}>
                                                                 <h4>Delete</h4>
                                                             </Button>
@@ -142,7 +148,7 @@ export default function ResponceOverView(props) {
                                                 } 
                                             })()}
                                             <Button key={item+"button6"}
-                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName)}} 
+                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName, props.responses[item].title)}} 
                                                 style={{height: '40px' , backgroundColor: '#205055',position: 'absolute', right: '10px',top: '20px'}}>
                                                 <h4>Copy</h4>
                                             </Button>
@@ -158,12 +164,12 @@ export default function ResponceOverView(props) {
                                                     return (
                                                         <div>
                                                             <Button key={item+"button1"} 
-                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body)}} 
+                                                                onClick={() => {setUpPopUpStates(true, props.responses[item].id, props.responses[item].body, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '140px',top: '20px'}}>
                                                                 <h4>Edit</h4>
                                                             </Button>
                                                             <Button key={item+"button2"}
-                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id)}} 
+                                                                onClick={() => {setDelPopUpStates(true, props.responses[item].id, props.responses[item].title)}} 
                                                                 style={{height: '40px' ,position: 'absolute', right: '210px',top: '20px'}}>
                                                                 <h4>Delete</h4>
                                                             </Button>
@@ -172,7 +178,7 @@ export default function ResponceOverView(props) {
                                                 } 
                                             })()}
                                             <Button key={item+"button3"}
-                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName)}} 
+                                                onClick={() => {copy(props.responses[item].body.replace(/<[^>]+>/g, '\n'), props.userName, props.responses[item].title)}} 
                                                 style={{height: '40px' , backgroundColor: '#205055',position: 'absolute', right: '10px',top: '20px'}}>
                                                 <h4>Copy</h4>
                                             </Button>
