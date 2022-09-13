@@ -32,14 +32,10 @@ import AddGoogleAnalytics from "./components/googleAnalyitics"; //AddGoogleAnaly
 import ReactGA from "react-ga";
 
 
-
-
-const db = getFirestore(app)
-
-const TRACKING_ID = "G-GESTQDBWTW"; // google tracking ID
+const TRACKING_ID = "UA-215791899-1"; // google tracking ID
 ReactGA.initialize(TRACKING_ID);
 
-
+const db = getFirestore(app)
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
