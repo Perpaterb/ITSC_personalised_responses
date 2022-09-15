@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import "./deletePopUp.css";
 import { doc, updateDoc} from 'firebase/firestore';
 
-import AddGoogleAnalytics from "../components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
+import AddGoogleAnalytics from "../components/googleAnalyitics"; //(action, category, label, user)
 
 const number1 = Math.floor(Math.random() * 10) + 1
 const number2 = Math.floor(Math.random() * 10) + 1
@@ -23,7 +23,7 @@ export default function DeletePopUp(props) {
       await updateDoc(itemdoc , update)
       props.setPopUpActive(false)
       window.location.reload(false);
-      AddGoogleAnalytics(props.type, "delete", props.title, props.userEmail)  
+      AddGoogleAnalytics("delete", props.type, props.title, props.userEmail) //(action, category, label, user)
     }
   }
 
