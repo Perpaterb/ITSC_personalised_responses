@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import DeletePopUp from "./DeletePopUp"
 import UpdatePopUp from "./UpdatePopUp"
-import AddGoogleAnalytics from "../components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
+import AddGoogleAnalytics from "../components/googleAnalyitics"; //(action, category, label, user)
 
 
 export default function ResponceOverView(props) {
@@ -31,7 +31,7 @@ export default function ResponceOverView(props) {
             const allText = greating + text + sightOff
             navigator.clipboard.writeText(allText)
         }
-        AddGoogleAnalytics(props.type, "Copy", title, props.userEmail)
+        AddGoogleAnalytics("copy", props.type, title, props.userEmail) //(action, category, label, user)
     }
 
     function setDelPopUpStates(active, id, title) {

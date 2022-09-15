@@ -27,13 +27,7 @@ import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
 import RefreshButton from "./components/refreshButton";
-import AddGoogleAnalytics from "./components/googleAnalyitics"; //AddGoogleAnalytics(category, action, label, user)
-
-import ReactGA from "react-ga";
-
-
-const TRACKING_ID = "UA-215791899-1"; // google tracking ID
-ReactGA.initialize(TRACKING_ID);
+import AddGoogleAnalytics from "./components/googleAnalyitics"; //(action, category, label, user)
 
 const db = getFirestore(app)
 
@@ -163,7 +157,7 @@ export default function App() {
       if (canBeCreated === false){
         await addDoc(responsesCollectionRef, {body: newResponsesbody, class: newResponsesClass, title: newResponsesTitle , active: true, updatedBy: userEmail})
         
-        AddGoogleAnalytics(newResponsesClass, "Cteate New", newResponsesTitle, userEmail)
+        AddGoogleAnalytics("create new", newResponsesClass, newResponsesTitle, userEmail) //(action, category, label, user)
         //forceUpdateDB()
         setnewResponsesTitle("")
         setnewResponsesbody("")
@@ -275,7 +269,7 @@ export default function App() {
         default:
       }
       setTabValue(newValue);
-      ReactGA.pageview(tabName, [userEmail])
+      AddGoogleAnalytics("tab view", tabName, null, userEmail) //(action, category, label, user)
     }
 
     function handleSearch(e) {
@@ -290,7 +284,7 @@ export default function App() {
       } else {
         pageName = "contacts"
       }
-      AddGoogleAnalytics(pageName, "search", e, userEmail)
+      AddGoogleAnalytics("search", pageName, e, userEmail) //(action, category, label, user)
     }
 
     function changeMode(e) {
@@ -307,7 +301,7 @@ export default function App() {
         setTabValue(52)
         pageName = "contacts"
       }
-      ReactGA.pageview(pageName, [userEmail])
+      AddGoogleAnalytics("page view", pageName, null, userEmail) //(action, category, label, user)
     }
     
     function getAllCounts(search) {
