@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {app} from './componenTS/firebase'
+import {app} from './components/firebase'
 import { collection, getDocs, addDoc} from 'firebase/firestore';
 import { getFirestore } from "@firebase/firestore";
-import GoogleAuth from "./componenTS/GoogleAuth"
-import ResponceOverView from "./componenTS/ResponceOverView"
-import ScrollToTop from "./componenTS/ScrollToTop"
+import GoogleAuth from "./components/GoogleAuth"
+import ResponceOverView from "./components/ResponceOverView"
+import ScrollToTop from "./components/ScrollToTop"
 
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
@@ -26,8 +26,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
-import RefreshButton from "./componenTS/refreshButton";
-import AddGoogleAnalytics from "./componenTS/googleAnalyitics"; //(action, category, label, user)
+import RefreshButton from "./components/refreshButton";
+import AddGoogleAnalytics from "./components/googleAnalyitics"; //(action, category, label, user)
 
 const db = getFirestore(app)
 
@@ -41,7 +41,7 @@ const Search = styled('div')(({ theme }) => ({
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: '100%',
-  [theme.breakpoinTS.up('sm')]: {
+  [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
     width: 'auto',
   },
@@ -51,7 +51,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
-  pointerEvenTS: 'none',
+  pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -65,7 +65,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoinTS.up('md')]: {
+    [theme.breakpoints.up('md')]: {
       width: '20ch',
     },
   },
@@ -108,8 +108,6 @@ export default function App() {
     // if (window.localStorage.getItem("matthewMode") === null) {
     //   window.localStorage.setItem("matthewMode", false)
     // }
-    
-    const [matthewMode, setMatthewMode] = useState(0)
       
     const [tabValue, setTabValue] = useState(0)
 
@@ -122,7 +120,7 @@ export default function App() {
     const [canBeCreated, setCanBeCreated] = useState(false)
     const [error, setError] = useState("")
 
-    const [searchValue, seTSearchValue] = useState("")
+    const [searchValue, setsearchValue] = useState("")
 
     const [userEmail, setUserEmail] = useState("")
     const [userName, setUserName] = useState("")
@@ -154,19 +152,11 @@ export default function App() {
         //forceUpdateDB()
         setnewResponsesTitle("")
         setnewResponsesbody("")
-        getAllCounTS("")
-        seTSearchValue("")
+        getAllCounts("")
+        setsearchValue("")
         
         //console.log("matthewMode: ", matthewMode, "     tabValue: ",tabValue)
-
-        if (matthewMode === 0) {
-          setTabValue(0)
-        } else if( matthewMode === 1){
-          setTabValue(51)
-        } else {
-          setTabValue(52)
-        }
-        
+       
       }
     }
 
@@ -254,38 +244,11 @@ export default function App() {
     }
 
     function handleSearch(e) {
-      getAllCounTS(e)
-      seTSearchValue(e)
-
-      let pageName = ""
-      if (matthewMode === 0) {
-        pageName = "respoonse"
-      }else if (matthewMode === 1){
-        pageName = "support"
-      } else {
-        pageName = "contacTS"
-      }
-      AddGoogleAnalytics("search", pageName, e, userEmail) //(action, category, label, user)
-    }
-
-    function changeMode(e) {
-      setMatthewMode(e)
-      window.localStorage.setItem("matthewMode", e)
-      let pageName = ""
-      if (e === 0) {
-        setTabValue(0)
-        pageName = "responses"
-      }else if (e === 1){
-        setTabValue(51)
-        pageName = "support"
-      } else {
-        setTabValue(52)
-        pageName = "contacTS"
-      }
-      AddGoogleAnalytics("page view", pageName, null, userEmail) //(action, category, label, user)
+      getAllCounts(e)
+      setsearchValue(e)
     }
     
-    function getAllCounTS(search) {
+    function getAllCounts(search) {
     
       const JSTitlesTemp = []
       const TSTitlesTemp = []
@@ -409,7 +372,7 @@ export default function App() {
       } else {
         setError("")
       }
-    }, [newResponsesTitle])
+    }, [newResponsesTitle, responses])
 
     useEffect(() => {
       updateFromDB()
@@ -417,7 +380,7 @@ export default function App() {
     }, [])
 
     useEffect(() => {
-      getAllCounTS("")
+      getAllCounts("")
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [responses])
 
@@ -460,12 +423,12 @@ export default function App() {
         <Box sx={{ width: '100%' }}>
           <Box display="flex" justifyContent="center" alignItems="center" sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="Class">
-              {(() => { if (matthewMode === 0){  return ( <Tab value={0} label={allTabLable} {...a11yProps(0)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={1} label={JSTabLable} {...a11yProps(1)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={2} label={TSTabLable} {...a11yProps(2)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={3} label={ReactTabLable} {...a11yProps(3)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={4} label={NotesTabLable} {...a11yProps(4)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={5} label={OtherTabLable} {...a11yProps(5)} />) } })()}
+            <Tab value={0} label={allTabLable} {...a11yProps(0)} />
+            <Tab value={1} label={JSTabLable} {...a11yProps(1)} />
+            <Tab value={2} label={TSTabLable} {...a11yProps(2)} />
+            <Tab value={3} label={ReactTabLable} {...a11yProps(3)} />
+            <Tab value={4} label={NotesTabLable} {...a11yProps(4)} />
+            <Tab value={5} label={OtherTabLable} {...a11yProps(5)} />
 
               {(() => {
                 if (userEmail !== null){
@@ -527,6 +490,7 @@ export default function App() {
                       <FormHelperText>Title</FormHelperText>
                       <OutlinedInput onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
                       <span sx={{ m: 1}}> </span>
+                        <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Contact listing</Button>
                       <span>{error}</span>
                     </FormControl>
                 </Box>

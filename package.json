@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^13.5.0",
     "dotenv": "^10.0.0",
     "draft-js": "^0.11.7",
-    "firebase": "^9.6.1",
+    "firebase": "^9.15.0",
     "ga-4-react": "^0.1.281",
     "material-ui-search-bar": "^1.0.0",
     "react": "^16.13.0",
