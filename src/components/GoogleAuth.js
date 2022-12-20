@@ -28,7 +28,7 @@ function SignInWithGoogle() {
     <div>
       <Button color="inherit" onClick={signInWithGoogle}>
         <Typography variant="span" component="div" sx={{ flexGrow: 1 }}>
-          Sign in with UTS google account
+          Sign in to edit
         </Typography>
       </Button>
     </div>

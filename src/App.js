@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {app} from './components/firebase'
+import {app} from './componenTS/firebase'
 import { collection, getDocs, addDoc} from 'firebase/firestore';
 import { getFirestore } from "@firebase/firestore";
-import GoogleAuth from "./components/GoogleAuth"
-import ResponceOverView from "./components/ResponceOverView"
-import ScrollToTop from "./components/ScrollToTop"
+import GoogleAuth from "./componenTS/GoogleAuth"
+import ResponceOverView from "./componenTS/ResponceOverView"
+import ScrollToTop from "./componenTS/ScrollToTop"
 
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
@@ -26,8 +26,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 
-import RefreshButton from "./components/refreshButton";
-import AddGoogleAnalytics from "./components/googleAnalyitics"; //(action, category, label, user)
+import RefreshButton from "./componenTS/refreshButton";
+import AddGoogleAnalytics from "./componenTS/googleAnalyitics"; //(action, category, label, user)
 
 const db = getFirestore(app)
 
@@ -41,7 +41,7 @@ const Search = styled('div')(({ theme }) => ({
   marginRight: theme.spacing(2),
   marginLeft: 0,
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
+  [theme.breakpoinTS.up('sm')]: {
     marginLeft: theme.spacing(3),
     width: 'auto',
   },
@@ -51,7 +51,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
-  pointerEvents: 'none',
+  pointerEvenTS: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -65,7 +65,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoinTS.up('md')]: {
       width: '20ch',
     },
   },
@@ -122,7 +122,7 @@ export default function App() {
     const [canBeCreated, setCanBeCreated] = useState(false)
     const [error, setError] = useState("")
 
-    const [searchValue, setSearchValue] = useState("")
+    const [searchValue, seTSearchValue] = useState("")
 
     const [userEmail, setUserEmail] = useState("")
     const [userName, setUserName] = useState("")
@@ -131,25 +131,18 @@ export default function App() {
     const responsesCollectionRef = collection(db, "responses")
 
     const [allTabLable, setAllTabLable] = useState("All")
-    const [staffTabLable, setStaffTabLable] = useState("Staff")
-    const [studentTabLable, setStudentTabLable] = useState("Student")
-    const [toCloseTabLable, setToCloseTabLable] = useState("To Close")
-    const [postItsTabLable, setPostItsTabLable] = useState("Post-its")
-    const [referToCatalogueTabLable, setReferToCatalogueTabLable] = useState("Refer To Catalogue")
-    const [insearchTabLable, setInsearchTabLable] = useState("Insearch")
-    const [outageTabLable, setOutageTabLable] = useState("Outage")
-    const [supportTabLable, setSupportTabLable] = useState("Support")
-    const [contactTabLable, setContactTabLable] = useState("Contact")
+    const [JSTabLable, setJSTabLable] = useState("JS")
+    const [TSTabLable, setTSTabLable] = useState("TS")
+    const [ReactTabLable, setReactTabLable] = useState("React")
+    const [NotesTabLable, setNotesTabLable] = useState("Notes")
+    const [OtherTabLable, setOtherTabLable] = useState("Other")
 
-    const [staffTitles, setStaffTitles] = useState([])
-    const [studentTitles, setStudentTitles] = useState([])
-    const [toCloseTitles, setToCloseTitles] = useState([])
-    const [postItsTitles, setPostItsTitles] = useState([])
-    const [referToCatalogueTitles, setReferToCatalogueTitles] = useState([])
-    const [insearchTitles, setInsearchTitles] = useState([])
-    const [outageTitles, setOutageTitles] = useState([])
-    const [supportTitles, setSupportTitles] = useState([])
-    const [contactTitles, setContactTitles] = useState([])
+
+    const [JSTitles, setJSTitles] = useState([])
+    const [TSTitles, setTSTitles] = useState([])
+    const [ReactTitles, setReactTitles] = useState([])
+    const [NotesTitles, setNotesTitles] = useState([])
+    const [OtherTitles, setOtherTitles] = useState([])
     const [allTitles, setAllTitles] = useState([])
 
 
@@ -161,8 +154,8 @@ export default function App() {
         //forceUpdateDB()
         setnewResponsesTitle("")
         setnewResponsesbody("")
-        getAllCounts("")
-        setSearchValue("")
+        getAllCounTS("")
+        seTSearchValue("")
         
         //console.log("matthewMode: ", matthewMode, "     tabValue: ",tabValue)
 
@@ -181,7 +174,7 @@ export default function App() {
       forceUpdateDB()
 
       // //if (userEmail !== null){
-      //   //if (userEmail.endsWith('@uts.edu.au')){
+      //   //if (userEmail.endsWith('zcarss@gmail.com')){
       //     if (window.localStorage.getItem("responsesAge") === null) {
       //       const getResponses = async () => {
       //         const data = await getDocs(responsesCollectionRef)
@@ -237,31 +230,19 @@ export default function App() {
           tabName = "All"
           break;
         case 1:
-          tabName = "Staff"
+          tabName = "JS"
           break;
         case 2:
-          tabName = "Student"
+          tabName = "TS"
           break;
         case 3:
-          tabName = "To Close"
+          tabName = "React"
           break;
         case 4:
-          tabName = "Post-its"
+          tabName = "Notes"
           break;
         case 5:
-          tabName = "Refer To Catalogue"
-          break;
-        case 6:
-          tabName = "Insearch"
-          break;
-        case 7:
-          tabName = "Outage"
-          break;
-        case 51:
-          tabName = "Support Note"
-          break;
-        case 52:
-          tabName = "Contact"
+          tabName = "Other"
           break;
         case 99:
           tabName = "Create New"
@@ -273,8 +254,8 @@ export default function App() {
     }
 
     function handleSearch(e) {
-      getAllCounts(e)
-      setSearchValue(e)
+      getAllCounTS(e)
+      seTSearchValue(e)
 
       let pageName = ""
       if (matthewMode === 0) {
@@ -282,7 +263,7 @@ export default function App() {
       }else if (matthewMode === 1){
         pageName = "support"
       } else {
-        pageName = "contacts"
+        pageName = "contacTS"
       }
       AddGoogleAnalytics("search", pageName, e, userEmail) //(action, category, label, user)
     }
@@ -299,163 +280,108 @@ export default function App() {
         pageName = "support"
       } else {
         setTabValue(52)
-        pageName = "contacts"
+        pageName = "contacTS"
       }
       AddGoogleAnalytics("page view", pageName, null, userEmail) //(action, category, label, user)
     }
     
-    function getAllCounts(search) {
+    function getAllCounTS(search) {
     
-      const staffTitlesTemp = []
-      const studentTitlesTemp = []
-      const toCloseTitlesTemp = []
-      const postItsTitlesTemp = []
-      const referToCatalogueTitlesTemp = []
-      const insearchTitlesTemp = []
-      const outageTitlesTemp = []
-      const supportTitlesTemp = []
-      const contactTitlesTemp = []
+      const JSTitlesTemp = []
+      const TSTitlesTemp = []
+      const ReactTitlesTemp = []
+      const NotesTitlesTemp = []
+      const OtherTitlesTemp = []
 
-      const staffTitlesIndexTemp = []
-      const studentTitlesIndexTemp = []
-      const toCloseTitlesIndexTemp = []
-      const postItsTitlesIndexTemp = []
-      const referToCatalogueTitlesIndexTemp = []
-      const insearchTitlesIndexTemp = []
-      const outageTitlesIndexTemp = []
-      const supportTitlesIndexTemp = []
-      const contactTitlesIndexTemp = []
+
+      const JSTitlesIndexTemp = []
+      const TSTitlesIndexTemp = []
+      const ReactTitlesIndexTemp = []
+      const NotesTitlesIndexTemp = []
+      const OtherTitlesIndexTemp = []
+
     
       responses.sort((a, b) => a.title.localeCompare(b.title))
       
       responses.map((responses , i) => {
-        if (responses.class === "Staff" & responses.active === true) {
-          staffTitlesTemp.push(responses.title)
-          staffTitlesIndexTemp.push(i)
-        } else if (responses.class === "Student" & responses.active === true) {
-          studentTitlesTemp.push(responses.title)
-          studentTitlesIndexTemp.push(i)
-        } else if (responses.class === "To Close" & responses.active === true) {
-          toCloseTitlesTemp.push(responses.title)
-          toCloseTitlesIndexTemp.push(i)
-        } else if (responses.class === "Post-its" & responses.active === true) {
-          postItsTitlesTemp.push(responses.title)
-          postItsTitlesIndexTemp.push(i)
-        } else if (responses.class === "Refer To Catalogue" & responses.active === true) {
-          referToCatalogueTitlesTemp.push(responses.title)
-          referToCatalogueTitlesIndexTemp.push(i)
-        } else if (responses.class === "Insearch" & responses.active === true) {
-          insearchTitlesTemp.push(responses.title)
-          insearchTitlesIndexTemp.push(i)
-        } else if (responses.class === "Outage" & responses.active === true) {
-          outageTitlesTemp.push(responses.title)
-          outageTitlesIndexTemp.push(i)
-        } else if (responses.class === "Support Note" & responses.active === true) {
-          supportTitlesTemp.push(responses.title)
-          supportTitlesIndexTemp.push(i)
-        } else if (responses.class === "Contact" & responses.active === true) {
-          contactTitlesTemp.push(responses.title)
-          contactTitlesIndexTemp.push(i)
+        if (responses.class === "JS" & responses.active === true) {
+          JSTitlesTemp.push(responses.title)
+          JSTitlesIndexTemp.push(i)
+        } else if (responses.class === "TS" & responses.active === true) {
+          TSTitlesTemp.push(responses.title)
+          TSTitlesIndexTemp.push(i)
+        } else if (responses.class === "React" & responses.active === true) {
+          ReactTitlesTemp.push(responses.title)
+          ReactTitlesIndexTemp.push(i)
+        } else if (responses.class === "Notes" & responses.active === true) {
+          NotesTitlesTemp.push(responses.title)
+          NotesTitlesIndexTemp.push(i)
+        } else if (responses.class === "Other" & responses.active === true) {
+          OtherTitlesTemp.push(responses.title)
+          OtherTitlesIndexTemp.push(i)
         } 
         return (<></>)
       })
 
-      let staffTitlesTemp2 = staffTitlesIndexTemp
-      let studentTitlesTemp2 = studentTitlesIndexTemp
-      let toCloseTitlesTemp2 = toCloseTitlesIndexTemp
-      let postItsTitlesTemp2 = postItsTitlesIndexTemp
-      let referToCatalogueTitlesTemp2 = referToCatalogueTitlesIndexTemp
-      let insearchTitlesTemp2 = insearchTitlesIndexTemp
-      let outageTitlesTemp2 = outageTitlesIndexTemp 
-      let supportTitlesTemp2 = supportTitlesIndexTemp
-      let contactTitlesTemp2 = contactTitlesIndexTemp 
+      let JSTitlesTemp2 = JSTitlesIndexTemp
+      let TSTitlesTemp2 = TSTitlesIndexTemp
+      let ReactTitlesTemp2 = ReactTitlesIndexTemp
+      let NotesTitlesTemp2 = NotesTitlesIndexTemp
+      let OtherTitlesTemp2 = OtherTitlesIndexTemp
+
       
       if (search !== "") {
-        staffTitlesTemp2 = []
-        for (let i in staffTitlesTemp){
-          if (staffTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            staffTitlesTemp2.push(staffTitlesIndexTemp[i])
+        JSTitlesTemp2 = []
+        for (let i in JSTitlesTemp){
+          if (JSTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            JSTitlesTemp2.push(JSTitlesIndexTemp[i])
           }
         }
 
-        studentTitlesTemp2 = []
-        for (let i in studentTitlesTemp){
-          if (studentTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            studentTitlesTemp2.push(studentTitlesIndexTemp[i])
+        TSTitlesTemp2 = []
+        for (let i in TSTitlesTemp){
+          if (TSTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            TSTitlesTemp2.push(TSTitlesIndexTemp[i])
           }
         }
 
-        toCloseTitlesTemp2 = []
-        for (let i in toCloseTitlesTemp){
-          if (toCloseTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            toCloseTitlesTemp2.push(toCloseTitlesIndexTemp[i])
+        ReactTitlesTemp2 = []
+        for (let i in ReactTitlesTemp){
+          if (ReactTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            ReactTitlesTemp2.push(ReactTitlesIndexTemp[i])
           }
         }
 
-        postItsTitlesTemp2 = []
-        for (let i in postItsTitlesTemp){
-          if (postItsTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            postItsTitlesTemp2.push(postItsTitlesIndexTemp[i])
+        NotesTitlesTemp2 = []
+        for (let i in NotesTitlesTemp){
+          if (NotesTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            NotesTitlesTemp2.push(NotesTitlesIndexTemp[i])
           }
         }
 
-        referToCatalogueTitlesTemp2 = []
-        for (let i in referToCatalogueTitlesTemp){
-          if (referToCatalogueTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            referToCatalogueTitlesTemp2.push(referToCatalogueTitlesIndexTemp[i])
+        OtherTitlesTemp2 = []
+        for (let i in OtherTitlesTemp){
+          if (OtherTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
+            OtherTitlesTemp2.push(OtherTitlesIndexTemp[i])
           }
         }
 
-        insearchTitlesTemp2 = []
-        for (let i in insearchTitlesTemp){
-          if (insearchTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            insearchTitlesTemp2.push(insearchTitlesIndexTemp[i])
-          }
-        }
-
-        outageTitlesTemp2 = []
-        for (let i in outageTitlesTemp){
-          if (outageTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            outageTitlesTemp2.push(outageTitlesIndexTemp[i])
-          }
-        }
-
-        supportTitlesTemp2 = []
-        for (let i in supportTitlesTemp){
-          if (supportTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            supportTitlesTemp2.push(supportTitlesIndexTemp[i])
-          }
-        }
-
-        contactTitlesTemp2 = []
-        for (let i in contactTitlesTemp){
-          if (contactTitlesTemp[i].toLowerCase().includes(search.toLowerCase())) {
-            contactTitlesTemp2.push(contactTitlesIndexTemp[i])
-          }
-        }
       }
 
-      setStaffTitles(staffTitlesTemp2)
-      setStudentTitles(studentTitlesTemp2)
-      setToCloseTitles(toCloseTitlesTemp2)
-      setPostItsTitles(postItsTitlesTemp2)
-      setReferToCatalogueTitles(referToCatalogueTitlesTemp2)
-      setInsearchTitles(insearchTitlesTemp2)
-      setOutageTitles(outageTitlesTemp2)
-      setSupportTitles(supportTitlesTemp2)
-      setContactTitles(contactTitlesTemp2)
-      setAllTitles(staffTitlesTemp2.concat(studentTitlesTemp2).concat(toCloseTitlesTemp2).concat(postItsTitlesTemp2).concat(referToCatalogueTitlesTemp2).concat(insearchTitlesTemp2).concat(outageTitlesTemp2))
+      setJSTitles(JSTitlesTemp2)
+      setTSTitles(TSTitlesTemp2)
+      setReactTitles(ReactTitlesTemp2)
+      setNotesTitles(NotesTitlesTemp2)
+      setOtherTitles(OtherTitlesTemp2)
+      
+      setAllTitles(JSTitlesTemp2.concat(TSTitlesTemp2).concat(ReactTitlesTemp2).concat(NotesTitlesTemp2).concat(OtherTitlesTemp2))
 
-      setAllTabLable("All (" + (staffTitlesTemp2.length + studentTitlesTemp2.length + toCloseTitlesTemp2.length + postItsTitlesTemp2.length + referToCatalogueTitlesTemp2.length + insearchTitlesTemp2.length + outageTitlesTemp2.length) + ")")
-      setStaffTabLable("Staff (" +  staffTitlesTemp2.length + ")")
-      setStudentTabLable("Student (" +  studentTitlesTemp2.length + ")")
-      setToCloseTabLable("To Close (" +  toCloseTitlesTemp2.length + ")")
-      setPostItsTabLable("Post-its (" +  postItsTitlesTemp2.length + ")")
-      setReferToCatalogueTabLable("Refer To Catalogue (" +  referToCatalogueTitlesTemp2.length + ")")
-      setInsearchTabLable("Insearch (" +  insearchTitlesTemp2.length + ")")
-      setOutageTabLable("Outage (" +  outageTitlesTemp2.length + ")")
-      setSupportTabLable("Support Notes (" +  supportTitlesTemp2.length + ")")
-      setContactTabLable("Contacts (" +  contactTitlesTemp2.length + ")")
+      setAllTabLable("All (" + (JSTitlesTemp2.length + TSTitlesTemp2.length + ReactTitlesTemp2.length + NotesTitlesTemp2.length + OtherTitlesTemp2.length) + ")")
+      setJSTabLable("JS (" +  JSTitlesTemp2.length + ")")
+      setTSTabLable("TS (" +  TSTitlesTemp2.length + ")")
+      setReactTabLable("React (" +  ReactTitlesTemp2.length + ")")
+      setNotesTabLable("Notes (" +  NotesTitlesTemp2.length + ")")
+      setOtherTabLable("Other (" +  OtherTitlesTemp2.length + ")")
     }
 
     useEffect(() => {
@@ -491,7 +417,7 @@ export default function App() {
     }, [])
 
     useEffect(() => {
-      getAllCounts("")
+      getAllCounTS("")
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [responses])
 
@@ -510,17 +436,6 @@ export default function App() {
             <Toolbar disableGutters>
            
               <FormControl sx={{ m: 1, minWidth: 120 }}>
-                <Select
-                  value={matthewMode}
-                  onChange={(e) => changeMode(e.target.value)}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  sx={{fontSize: 20, backgroundColor: "#ffffff", minWidth: 300, textAlign: "center"}}
-                >
-                  <MenuItem value={0}>Personalised Responses</MenuItem>
-                  <MenuItem value={1}>Support Notes</MenuItem>
-                  <MenuItem value={2}>Contacts</MenuItem>
-                </Select>
               </FormControl>
               <RefreshButton refreshDBFunction={forceUpdateDB}/>
               <Search>
@@ -546,21 +461,15 @@ export default function App() {
           <Box display="flex" justifyContent="center" alignItems="center" sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tabValue} onChange={handleTabChange} aria-label="Class">
               {(() => { if (matthewMode === 0){  return ( <Tab value={0} label={allTabLable} {...a11yProps(0)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={1} label={staffTabLable} {...a11yProps(1)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={2} label={studentTabLable} {...a11yProps(2)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={3} label={toCloseTabLable} {...a11yProps(3)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={4} label={postItsTabLable} {...a11yProps(4)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={5} label={referToCatalogueTabLable} {...a11yProps(5)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={6} label={insearchTabLable} {...a11yProps(6)} />) } })()}
-              {(() => { if (matthewMode === 0){  return ( <Tab value={7} label={outageTabLable} {...a11yProps(7)} />) } })()}
-
-              {(() => { if (matthewMode === 1){  return ( <Tab value={51} label={supportTabLable} {...a11yProps(51)} />) } })()}
-
-              {(() => { if (matthewMode === 2){  return ( <Tab value={52} label={contactTabLable} {...a11yProps(52)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={1} label={JSTabLable} {...a11yProps(1)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={2} label={TSTabLable} {...a11yProps(2)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={3} label={ReactTabLable} {...a11yProps(3)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={4} label={NotesTabLable} {...a11yProps(4)} />) } })()}
+              {(() => { if (matthewMode === 0){  return ( <Tab value={5} label={OtherTabLable} {...a11yProps(5)} />) } })()}
 
               {(() => {
                 if (userEmail !== null){
-                  if (userEmail.endsWith('@uts.edu.au')){
+                  if (userEmail === 'zcarss@gmail.com'){
                     return (<Tab value={99} label="Create New" {...a11yProps(99)} />)
                   }
                 } 
@@ -572,33 +481,19 @@ export default function App() {
             <ResponceOverView type={"respoonse"} titles={allTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
-            <ResponceOverView type={"respoonse"} titles={staffTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={JSTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={2}>
-            <ResponceOverView type={"respoonse"} titles={studentTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={TSTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={3}>
-            <ResponceOverView type={"respoonse"} titles={toCloseTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={ReactTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={4}>
-            <ResponceOverView type={"respoonse"} titles={postItsTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={NotesTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
           <TabPanel value={tabValue} index={5}>
-            <ResponceOverView type={"respoonse"} titles={referToCatalogueTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
-          </TabPanel>
-          <TabPanel value={tabValue} index={6}>
-            <ResponceOverView type={"respoonse"} titles={insearchTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
-          </TabPanel>
-          <TabPanel value={tabValue} index={7}>
-            <ResponceOverView type={"respoonse"} titles={outageTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
-          </TabPanel>
-
-          <TabPanel value={tabValue} index={51}>
-            <ResponceOverView type={"support"} titles={supportTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
-          </TabPanel>
-
-          <TabPanel value={tabValue} index={52}>
-            <ResponceOverView type={"contact"} titles={contactTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
+            <ResponceOverView type={"respoonse"} titles={OtherTitles} responses={responses} userName={userName} userEmail={userEmail} db={db}/>
           </TabPanel>
 
           <TabPanel value={tabValue} index={99}>
@@ -622,79 +517,28 @@ export default function App() {
                           onChange={(event) => {setnewResponsesClass(event.target.value)}}
                           inputProps={{ 'aria-label': 'Class' }}
                       >
-                        <MenuItem value="Staff">Staff</MenuItem>
-                        <MenuItem value="Student">Student</MenuItem>
-                        <MenuItem value="To Close">To Close</MenuItem>
-                        <MenuItem value="Post-its">Post-its</MenuItem>
-                        <MenuItem value="Refer To Catalogue">Refer To Catalogue</MenuItem>
-                        <MenuItem value="Insearch">Insearch</MenuItem>
-                        <MenuItem value="Outage">Outage</MenuItem>
-                        <MenuItem value="Support Note">Support Note</MenuItem>
-                        <MenuItem value="Contact">Contact</MenuItem>
+                        <MenuItem value="JS">JS</MenuItem>
+                        <MenuItem value="TS">TS</MenuItem>
+                        <MenuItem value="React">React</MenuItem>
+                        <MenuItem value="Notes">Notes</MenuItem>
+                        <MenuItem value="Other">Other</MenuItem>
                       </Select>
                       
                       <FormHelperText>Title</FormHelperText>
                       <OutlinedInput onChange={(event) => {setnewResponsesTitle(event.target.value)}} />
                       <span sx={{ m: 1}}> </span>
-                      {(() => {
-                        if (newResponsesClass === "Contact"){
-                          return (
-                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Contact listing</Button>
-                          )
-                        } else if (newResponsesClass === "Support Note"){
-                          return (
-                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create Support Note</Button>
-                          )
-                        } else {
-                          return (
-                            <Button disabled={canBeCreated} variant="outlined" onClick={createResponses}>Create New Personalised Responses</Button>
-                          )
-                        }
-                      })()}
                       <span>{error}</span>
                     </FormControl>
                 </Box>
 
-                {(() => {
-                  if (newResponsesClass === "Contact"){
-                    return (
-                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
-                        <TextareaAutosize
-                          aria-label="textarea"
-                          placeholder="Empty"
-                          style={{ width: "100%" }}
-                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-                        />
-                      </Box>
-                    )
-                  } else if (newResponsesClass === "Support Note") {
-                    return (
-                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
-                        <TextareaAutosize
-                          aria-label="textarea"
-                          placeholder="Empty"
-                          style={{ width: "100%" }}
-                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-                        />
-                      </Box>
-                    )
-                  } else {
-                    return (
-                      <Box sx={{ width: '75%', maxWidth: '800px' }}>
-                        <p>Hi ______,<b/></p>
-                        <TextareaAutosize
-                          aria-label="textarea"
-                          placeholder="Empty"
-                          style={{ width: "100%" }}
-                          onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
-                        />
-                        <p>Kind regards,</p>
-                        <p>{userName}</p>
-                        <p>IT Support Centre</p>
-                        </Box>
-                    )
-                  }
-                })()}
+                <Box sx={{ width: '75%', maxWidth: '800px' }}>
+                  <TextareaAutosize
+                    aria-label="textarea"
+                    placeholder="Empty"
+                    style={{ width: "100%" }}
+                    onChange={(event) => {setnewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
+                  />
+                </Box>
             </Box>
           </TabPanel>
         </Box>

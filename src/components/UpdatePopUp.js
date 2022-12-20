@@ -41,7 +41,6 @@ export default function UpdatePopUp(props) {
   return (props.trigger) ?(
     <div className="up-popup">
       <div className="up-popup-inner">
-        {(() => { if (props.type !== "support"){ return (<p>Hi ______,<b/></p>) } })()}
           <TextareaAutosize
             aria-label="textarea"
             defaultValue={props.body.replace(/<br>/g, '\n')}
@@ -49,18 +48,6 @@ export default function UpdatePopUp(props) {
             style={{ width: "100%" }}
             onChange={(event) => {setNewResponsesbody(event.target.value.replace(/\n/g, '<br>'))}}
           />
-        {(() => { 
-          if (props.type !== "support") { 
-            return (
-              <div>
-                <p>Kind regards,</p>
-                <p>{props.userName}</p>
-                <p>IT Support Centre</p>
-              </div>
-            )
-          } 
-        })()}
-
         <OutlinedInput placeholder={question} onChange={(event) => {setAnswer(event.target.value)}} />
         <Button 
           className="update-button"

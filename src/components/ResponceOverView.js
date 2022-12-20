@@ -21,16 +21,7 @@ export default function ResponceOverView(props) {
     const [upPopUpActiveTitle, setUpPopUpActiveTitle] = useState("")
 
     function copy(text, name, title) {
-        if (props.type === "contact") {
-            navigator.clipboard.writeText(text)
-        } else if (props.type === "support"){
-            navigator.clipboard.writeText(text)
-        } else {
-            const greating  = "Hi ______, \n \n"
-            const sightOff = "\n \nKind regards,\n" + name + "\nIT Support Centre"
-            const allText = greating + text + sightOff
-            navigator.clipboard.writeText(allText)
-        }
+        navigator.clipboard.writeText(text)
         AddGoogleAnalytics("copy", props.type, title, props.userEmail) //(action, category, label, user)
     }
 
@@ -50,7 +41,7 @@ export default function ResponceOverView(props) {
     let autherised = false
 
     if (props.userEmail !== null){
-        if (props.userEmail.endsWith('@uts.edu.au')){
+        if (props.userEmail === 'zcarss@gmail.com'){
             autherised = true
         }
     } 
